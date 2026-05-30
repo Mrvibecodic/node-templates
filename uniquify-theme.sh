@@ -19,10 +19,20 @@
 #   - имена тегов, атрибуты href/src и т.п.;
 #   - любые классы/id/переменные, которых нет в карте переименования.
 #
-# Подход к переименованию — "белый список": вы сами перечисляете
-# базовые токены вашей темы (например, префикс БЭМ-блоков), и только они
-# заменяются. Это исключает поломку сторонних классов (bootstrap, tailwind,
-# иконочные шрифты и пр.).
+# Подход к переименованию — две стратегии:
+#   1) АВТО (по умолчанию): скрипт сам собирает имена классов/id из
+#      CSS-селекторов вашей темы и имена CSS-переменных (--var). Берутся
+#      только идентификаторы, реально объявленные в локальном CSS, — то есть
+#      гарантированно "свои", а не сторонние. Имена-омонимы HTML-тегов
+#      (body, code, nav, header, footer, form, ...) в авто-режиме
+#      исключаются, чтобы не сломать JS-селекторы вида querySelector('nav').
+#   2) "БЕЛЫЙ СПИСОК": через --tokens вы задаёте базовые токены вручную;
+#      тогда авто-сбор классов отключается (переменные всё равно собираются).
+#   Доп. охват и контроль: --scan-html добавляет в карту классы/id из
+#   HTML-атрибутов; --exclude "a,b" исключает конкретные имена;
+#   --include-reserved разрешает имена-омонимы тегов; --no-auto-tokens
+#   выключает авто-сбор классов. Это исключает поломку сторонних классов
+#   (bootstrap, tailwind, иконочные шрифты и пр.).
 #
 # Зависимости: bash 4+, coreutils (sed, awk, find, sort), perl 5
 #              (для контекстно-безопасного переименования) и один из:
@@ -66,6 +76,10 @@ SEED=""
 PREFIX="u"                      # префикс для сгенерированных имён (u<hash>)
 TOKENS=""                       # список базовых классов/id через запятую
 TOKENS_FILE=""                  # либо файл со списком (по токену на строку)
+AUTO_TOKENS=1                   # авто-сбор классов/id из CSS, если --tokens не задан
+SCAN_HTML=0                     # дополнительно собирать классы/id из HTML-атрибутов
+INCLUDE_RESERVED=0              # включать в карту имена-омонимы HTML-тегов (опасно для JS)
+EXCLUDE=""                      # имена, исключаемые из переименования (через запятую)
 RENAME_VARS=1                   # переименовывать ли CSS-переменные --var
 INJECT_COMMENTS=1               # вставлять ли случайные комментарии-маркеры
 JITTER_WHITESPACE=1             # подмешивать ли незначащие пробелы/переводы строк
@@ -89,7 +103,13 @@ usage() {
       --seed STR         seed для воспроизводимости (по умолчанию — случайный)
       --prefix STR       префикс генерируемых имён (по умолчанию: u)
       --tokens "a,b,c"   список базовых классов/id для переименования
+                         (если задан — авто-сбор классов отключается)
       --tokens-file F    файл со списком токенов (по одному на строку)
+      --no-auto-tokens   не собирать классы/id из CSS автоматически
+      --scan-html        дополнительно собирать классы/id из HTML-атрибутов
+      --include-reserved разрешить переименование имён-омонимов HTML-тегов
+                         (body, code, nav, ... — может сломать JS-селекторы)
+      --exclude "a,b"    имена, которые не переименовывать
       --ext "html,css"   расширения для обработки (по умолчанию: html,htm,css,js)
       --no-vars          не переименовывать CSS-переменные (--var)
       --no-comments      не вставлять случайные комментарии-маркеры
@@ -100,10 +120,14 @@ usage() {
   -h, --help             эта справка
 
 Примеры:
-  # Положить скрипт в папку темы и запустить — результат в output.zip рядом:
-  ./uniquify-theme.sh --tokens "hero,card,btn,nav,footer"
+  # Полный авто-режим: положить скрипт в папку темы и запустить. Классы/id
+  # и CSS-переменные собираются из самой темы — результат в output.zip рядом:
+  ./uniquify-theme.sh
 
-  # Явно указать исходную папку, итоговый zip и seed:
+  # Авто-режим с расширенным охватом (классы из HTML тоже) и фикс. seed:
+  ./uniquify-theme.sh --scan-html --seed site-01
+
+  # Ручной белый список + явные пути:
   scripts/uniquify-theme.sh -s ./theme --zip ./build/site-01.zip \
       --tokens "hero,card,btn,nav,footer" --seed site-01
 EOF
@@ -121,6 +145,10 @@ while [ $# -gt 0 ]; do
     --prefix)         PREFIX="${2:-}"; shift 2;;
     --tokens)         TOKENS="${2:-}"; shift 2;;
     --tokens-file)    TOKENS_FILE="${2:-}"; shift 2;;
+    --no-auto-tokens) AUTO_TOKENS=0; shift;;
+    --scan-html)      SCAN_HTML=1; shift;;
+    --include-reserved) INCLUDE_RESERVED=1; shift;;
+    --exclude)        EXCLUDE="${2:-}"; shift 2;;
     --ext)            EXTENSIONS="${2:-}"; shift 2;;
     --no-vars)        RENAME_VARS=0; shift;;
     --no-comments)    INJECT_COMMENTS=0; shift;;
@@ -171,11 +199,6 @@ fi
 log "seed: $SEED"
 
 # --------------------------- установка зависимостей --------------------------
-# Скрипту нужны: perl 5 и одна из утилит хеширования (md5sum/shasum/openssl).
-# Если чего-то не хватает и не передан --no-install-deps, пробуем доустановить
-# недостающие пакеты через доступный пакетный менеджер.
-
-# detect_pkg_mgr -> печатает имя поддерживаемого пакетного менеджера или пусто.
 detect_pkg_mgr() {
   local m
   for m in apt-get dnf yum pacman apk zypper brew; do
@@ -184,8 +207,6 @@ detect_pkg_mgr() {
   return 1
 }
 
-# pkg_install MGR PKG... -> устанавливает пакеты выбранным менеджером.
-# При необходимости использует sudo (если запущено не от root).
 pkg_install() {
   local mgr="$1"; shift
   local sudo=""
@@ -204,36 +225,25 @@ pkg_install() {
   esac
 }
 
-# ensure_deps -> проверяет наличие зависимостей и доустанавливает недостающие.
 ensure_deps() {
   local -a need_pkgs=()
-
-  # Утилита хеширования: достаточно любой из md5sum/shasum/openssl.
   if ! command -v md5sum >/dev/null 2>&1 \
      && ! command -v shasum >/dev/null 2>&1 \
      && ! command -v openssl >/dev/null 2>&1; then
     need_pkgs+=( coreutils )
   fi
-  # perl нужен всегда (контекстно-безопасное переименование).
   command -v perl >/dev/null 2>&1 || need_pkgs+=( perl )
-  # zip нужен, если результат упаковывается в архив.
   if [ "$MAKE_ZIP" -eq 1 ] && ! command -v zip >/dev/null 2>&1; then
     need_pkgs+=( zip )
   fi
-
   [ "${#need_pkgs[@]}" -eq 0 ] && return 0
-
   if [ "$AUTO_INSTALL_DEPS" -ne 1 ]; then
     die "не хватает зависимостей: ${need_pkgs[*]} (установите вручную или уберите --no-install-deps)"
   fi
-
   local mgr
   mgr="$(detect_pkg_mgr)" \
     || die "не хватает зависимостей: ${need_pkgs[*]}, и не найден поддерживаемый пакетный менеджер (установите их вручную)"
-
-  printf '[uniquify] не хватает зависимостей: %s. Устанавливаю через %s%s...\n' \
-    "${need_pkgs[*]}" "$mgr" \
-    "$( [ "$(id -u 2>/dev/null || echo 0)" != "0" ] && command -v sudo >/dev/null 2>&1 && printf ' (потребуются права sudo)' )" >&2
+  printf '[uniquify] не хватает зависимостей: %s. Устанавливаю через %s...\n' "${need_pkgs[*]}" "$mgr" >&2
   pkg_install "$mgr" "${need_pkgs[@]}" \
     || die "не удалось установить зависимости: ${need_pkgs[*]} (установите их вручную)"
 }
@@ -241,7 +251,6 @@ ensure_deps() {
 ensure_deps
 
 # ------------------------- хеш-функция (детерминизм по seed) ------------------
-# hashstr STRING -> hex-строка. Используется для генерации воспроизводимых имён.
 if command -v md5sum >/dev/null 2>&1; then
   hashstr() { printf '%s' "$1" | md5sum | awk '{print $1}'; }
 elif command -v shasum >/dev/null 2>&1; then
@@ -254,22 +263,13 @@ fi
 
 command -v perl >/dev/null 2>&1 || die "нужен perl 5 (для безопасного переименования)"
 
-# genname BASE -> детерминированное имя вида <PREFIX><6-hex>, зависящее от seed.
+# genname BASE -> детерминированное имя вида <PREFIX><8-hex>, зависящее от seed.
 genname() {
   local h; h="$(hashstr "${SEED}::${1}")"
   printf '%s%s' "$PREFIX" "${h:0:8}"
 }
 
-# rand_hex N -> N случайных hex-символов (невоспроизводимый маркер).
-rand_hex() {
-  local n="$1" s
-  s="$(hashstr "${SEED}::$(date +%s%N 2>/dev/null || echo $RANDOM)::$RANDOM::$RANDOM")"
-  printf '%s' "${s:0:$n}"
-}
-
 # seedhash KEY N -> N hex-символов, детерминированно зависящих от seed и KEY.
-# Используется для маркеров, чтобы при одинаковом --seed сборка была
-# полностью воспроизводимой.
 seedhash() {
   local h; h="$(hashstr "${SEED}::mark::${1}")"
   printf '%s' "${h:0:${2}}"
@@ -278,13 +278,9 @@ seedhash() {
 # ------------------------------ подготовка вывода ----------------------------
 log "копирую $SRC -> $OUT"
 mkdir -p "$OUT"
-# Копируем содержимое исходной папки (вместе со скрытыми файлами).
 cp -a "$SRC"/. "$OUT"/
-# Не тащим в сборку сам скрипт, его манифест, прежний архив и прежнюю папку
-# вывода (актуально, когда работаем прямо в папке скрипта).
 rm -f "$OUT/$SELF_NAME" "$OUT/.uniquify-manifest.txt"
 [ -n "$ZIP_OUT" ] && rm -f "$OUT/$(basename "$ZIP_OUT")"
-# Если прошлая папка вывода (FINAL_OUT) лежала внутри исходника — исключаем её.
 if [ -n "$FINAL_OUT" ] && [ "$(cd "$(dirname "$FINAL_OUT")" 2>/dev/null && pwd)" = "$SRC" ]; then
   rm -rf "$OUT/$(basename "$FINAL_OUT")"
 fi
@@ -308,6 +304,7 @@ find_targets() {
 
 # ------------------------- собираем список токенов ---------------------------
 declare -a TOKEN_LIST=()
+declare -a VAR_LIST=()
 if [ -n "$TOKENS" ]; then
   IFS=',' read -r -a _tmp <<< "$TOKENS"
   for t in "${_tmp[@]}"; do
@@ -323,6 +320,80 @@ if [ -n "$TOKENS_FILE" ]; then
   done < "$TOKENS_FILE"
 fi
 
+# Авто-сбор токенов из самой темы: имена классов/id из CSS-селекторов
+# (и опц. из HTML) и имена CSS-переменных (--var). Заполняет TOKEN_LIST
+# (если он пуст и включён авто-режим) и VAR_LIST (когда включён RENAME_VARS).
+discover_tokens() {
+  local dh; dh="$(mktemp)"
+  cat > "$dh" <<'PERL'
+use strict; use warnings;
+my $mode = $ENV{DMODE} || 'css';
+local $/; my $data = <STDIN>;
+my (%cls, %var);
+if ($mode eq 'css') {
+    $data =~ s{/\*.*?\*/}{}gs;                 # убрать комментарии
+    while ($data =~ /([^{}]+)\{/g) {           # преамбулы селекторов (до '{')
+        my $sel = $1;
+        next if $sel =~ /^\s*\@/;              # пропускаем @media/@font-face/...
+        while ($sel =~ /[.#]([A-Za-z_][A-Za-z0-9_-]*)/g) { $cls{$1} = 1 }
+    }
+    while ($data =~ /--([A-Za-z_][A-Za-z0-9_-]*)/g) { $var{$1} = 1 }
+}
+elsif ($mode eq 'html') {
+    while ($data =~ /(?:class|id)\s*=\s*("[^"]*"|'[^']*'|[^\s"'=<>`]+)/gi) {
+        my $v = $1; $v =~ s/^["']//; $v =~ s/["']$//;
+        while ($v =~ /([A-Za-z_][A-Za-z0-9_-]*)/g) { $cls{$1} = 1 }
+    }
+}
+print "C\t$_\n" for sort keys %cls;
+print "V\t$_\n" for sort keys %var;
+PERL
+
+  local f
+  local -a css_files=() html_files=()
+  while IFS= read -r f; do case "$f" in *.css|*.CSS) css_files+=( "$f" );; esac; done < <(find_targets)
+  while IFS= read -r f; do case "$f" in *.html|*.htm|*.HTML|*.HTM) html_files+=( "$f" );; esac; done < <(find_targets)
+
+  local raw=""
+  [ "${#css_files[@]}" -gt 0 ] && raw="$(cat "${css_files[@]}" 2>/dev/null | DMODE=css perl "$dh")"
+  if [ "$SCAN_HTML" -eq 1 ] && [ "${#html_files[@]}" -gt 0 ]; then
+    raw="$raw"$'\n'"$(cat "${html_files[@]}" 2>/dev/null | DMODE=html perl "$dh")"
+  fi
+  rm -f "$dh"
+
+  # Денилист имён-омонимов HTML-тегов: опасны в JS-строках (querySelector('nav')).
+  local reserved=" a abbr address area article aside audio b base bdi bdo blockquote body br button canvas caption cite code col colgroup data datalist dd del details dfn dialog div dl dt em embed fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 head header hgroup hr html i iframe img input ins kbd label legend li link main map mark menu meta meter nav noscript object ol optgroup option output p param picture pre progress q rp rt ruby s samp script section select slot small source span strong style sub summary sup table tbody td template textarea tfoot th thead time title tr track u ul var video wbr "
+
+  local -A excl=()
+  if [ -n "$EXCLUDE" ]; then
+    local e; local -a _ex
+    IFS=',' read -r -a _ex <<< "$EXCLUDE"
+    for e in "${_ex[@]}"; do e="$(printf '%s' "$e" | tr -d ' ')"; [ -n "$e" ] && excl["$e"]=1; done
+  fi
+
+  local collect_classes=0
+  [ "${#TOKEN_LIST[@]}" -eq 0 ] && [ "$AUTO_TOKENS" -eq 1 ] && collect_classes=1
+
+  local kind name
+  while IFS=$'\t' read -r kind name; do
+    [ -n "$name" ] || continue
+    [ "${#name}" -ge 2 ] || continue                 # пропускаем односимвольные
+    [ -n "${excl[$name]:-}" ] && continue            # пользовательские исключения
+    case "$kind" in
+      C)
+        [ "$collect_classes" -eq 1 ] || continue
+        if [ "$INCLUDE_RESERVED" -ne 1 ] && [[ "$reserved" == *" $name "* ]]; then continue; fi
+        TOKEN_LIST+=( "$name" )
+        ;;
+      V)
+        [ "$RENAME_VARS" -eq 1 ] || continue
+        VAR_LIST+=( "$name" )
+        ;;
+    esac
+  done <<< "$raw"
+}
+discover_tokens
+
 # Уникализируем и сортируем по убыванию длины: длинные токены заменяем первыми,
 # чтобы избежать частичных пересечений (например, "card" и "card-title").
 if [ "${#TOKEN_LIST[@]}" -gt 0 ]; then
@@ -330,17 +401,19 @@ if [ "${#TOKEN_LIST[@]}" -gt 0 ]; then
     | awk '!seen[$0]++' \
     | awk '{ print length, $0 }' | sort -rn | cut -d" " -f2-)
 fi
+if [ "${#VAR_LIST[@]}" -gt 0 ]; then
+  mapfile -t VAR_LIST < <(printf '%s\n' "${VAR_LIST[@]}" \
+    | awk '!seen[$0]++' \
+    | awk '{ print length, $0 }' | sort -rn | cut -d" " -f2-)
+fi
+log "токенов классов/id: ${#TOKEN_LIST[@]}, переменных: ${#VAR_LIST[@]}"
 
 # ---------------------------------------------------------------------------
 # Контекстно-безопасное переименование (perl).
 # ---------------------------------------------------------------------------
-# Карта токенов и карта CSS-переменных пишутся во временные tab-файлы
-# (TOKEN<TAB>NEW), отсортированные "длинные → короткие". perl-хелпер читает
-# их и применяет замены строго в нужном контексте, по типу файла.
 WORKTMP=""
 cleanup() {
   [ -n "$WORKTMP" ] && rm -rf "$WORKTMP"
-  # Временную папку вывода удаляем только после успешной упаковки в zip.
   [ "${OUT_IS_TEMP:-0}" -eq 1 ] && [ "${OUT_PACKED:-0}" -eq 1 ] && rm -rf "$OUT"
   true
 }
@@ -353,13 +426,17 @@ PERL_HELPER="$WORKTMP/uniq.pl"
 : > "$VAR_MAP"
 
 build_maps() {
-  local t
+  local t v
   if [ "${#TOKEN_LIST[@]}" -gt 0 ]; then
     for t in "${TOKEN_LIST[@]}"; do
       printf '%s\t%s\n' "$t" "$(genname "class::$t")" >> "$TOKEN_MAP"
-      if [ "$RENAME_VARS" -eq 1 ]; then
-        printf '%s\t%s\n' "$t" "$(genname "var::$t")" >> "$VAR_MAP"
-      fi
+    done
+  fi
+  # Карта CSS-переменных строится из реально найденных имён --var, а не из
+  # списка классов (имена классов и переменных, как правило, не совпадают).
+  if [ "$RENAME_VARS" -eq 1 ] && [ "${#VAR_LIST[@]}" -gt 0 ]; then
+    for v in "${VAR_LIST[@]}"; do
+      printf '%s\t%s\n' "$v" "$(genname "var::$v")" >> "$VAR_MAP"
     done
   fi
 }
@@ -369,7 +446,6 @@ write_perl_helper() {
   cat > "$PERL_HELPER" <<'PERL'
 use strict; use warnings;
 
-# Загрузка карт TOKEN\tNEW (порядок важен: длинные токены идут первыми).
 sub load_map {
     my ($path) = @_;
     my @m;
@@ -390,10 +466,6 @@ my @TOK = load_map($ENV{TOKEN_MAP});
 my @VAR = load_map($ENV{VAR_MAP});
 my $mode = $ENV{MODE} || '';
 
-# Переименование идентификаторов класса/id внутри произвольной строки $s.
-# Совпадение — токен, стоящий в начале идентификатора: слева либо начало,
-# либо символ не из [A-Za-z0-9_-]; справа НЕ из [A-Za-z0-9_] (дефис разрешён,
-# чтобы сохранить BEM-суффиксы: hero--big -> NEW--big).
 sub rename_ids {
     my ($s) = @_;
     for my $p (@TOK) {
@@ -404,7 +476,6 @@ sub rename_ids {
     return $s;
 }
 
-# Переименование CSS-переменных --token (объявление и var(--token)).
 sub rename_vars {
     my ($s) = @_;
     for my $p (@VAR) {
@@ -415,11 +486,10 @@ sub rename_vars {
     return $s;
 }
 
-local $/;            # слурп всего файла
+local $/;
 my $data = <STDIN>;
 
 if ($mode eq 'css') {
-    # Только селекторы .token / #token.
     for my $p (@TOK) {
         my ($t, $n) = @$p;
         my $q = quotemeta $t;
@@ -428,8 +498,6 @@ if ($mode eq 'css') {
     $data = rename_vars($data);
 }
 elsif ($mode eq 'html') {
-    # Значения атрибутов class/id: в двойных, одинарных кавычках или без
-    # кавычек (валидный HTML5: class=value).
     $data =~ s{((?:class|id)\s*=\s*)("[^"]*"|'[^']*'|[^\s"'=<>`]+)}{
         my ($pre, $raw) = ($1, $2);
         my $qc = substr($raw, 0, 1);
@@ -437,14 +505,12 @@ elsif ($mode eq 'html') {
             my $val = substr($raw, 1, length($raw) - 2);
             $pre . $qc . rename_ids($val) . $qc;
         } else {
-            $pre . rename_ids($raw);     # значение без кавычек
+            $pre . rename_ids($raw);
         }
     }gei;
-    # CSS-переменные могут встречаться в инлайновом style="--token: ...".
     $data = rename_vars($data) if @VAR;
 }
 elsif ($mode eq 'js') {
-    # Только содержимое строковых литералов '...', "...", `...`.
     $data =~ s/('(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|`(?:\\.|[^`\\])*`)/
         my $lit = $1;
         my $qc  = substr($lit, 0, 1);
@@ -453,14 +519,12 @@ elsif ($mode eq 'js') {
     /ge;
 }
 else {
-    # неизвестный режим — ничего не меняем
 }
 
 print $data;
 PERL
 }
 
-# Применяет perl-хелпер к одному файлу в заданном режиме.
 apply_perl() {
   local mode="$1" file="$2"
   MODE="$mode" TOKEN_MAP="$TOKEN_MAP" VAR_MAP="$VAR_MAP" \
@@ -471,7 +535,10 @@ apply_perl() {
 # Шаг 1+2. Контекстное переименование классов/id и CSS-переменных по типу файла.
 # ---------------------------------------------------------------------------
 rename_tokens() {
-  [ "${#TOKEN_LIST[@]}" -gt 0 ] || { log "токены не заданы — пропускаю переименование"; return 0; }
+  if [ "${#TOKEN_LIST[@]}" -eq 0 ] && [ "${#VAR_LIST[@]}" -eq 0 ]; then
+    log "нет ни токенов классов/id, ни переменных — пропускаю переименование"
+    return 0
+  fi
   build_maps
   write_perl_helper
   local f t new
@@ -489,9 +556,6 @@ rename_tokens() {
   done < <(find_targets)
 }
 
-# CSS-переменные уже обрабатываются внутри rename_tokens (режимы css/html).
-rename_css_vars() { return 0; }
-
 # ---------------------------------------------------------------------------
 # Шаг 3. Чистка/рандомизация сигнатурного <meta name="generator">.
 # ---------------------------------------------------------------------------
@@ -502,14 +566,12 @@ strip_generator() {
     [ -n "$f" ] || continue
     case "$f" in *.html|*.htm|*.HTML|*.HTM) ;; *) continue;; esac
     tag="$(seedhash "gen::${f#"$OUT"/}" 10)"
-    # Заменяем content у generator на детерминированный, не ломая разметку.
     sed -i -E "s/(<meta[^>]*name=[\"']generator[\"'][^>]*content=[\"'])[^\"']*([\"'])/\1build-${tag}\2/Ig" "$f"
   done < <(find_targets)
 }
 
 # ---------------------------------------------------------------------------
-# Шаг 4. Вставка случайных комментариев-маркеров (меняет размер/хеш файла,
-#         не влияя на отображение). Синтаксис комментария — по типу файла.
+# Шаг 4. Вставка случайных комментариев-маркеров.
 # ---------------------------------------------------------------------------
 inject_comments() {
   [ "$INJECT_COMMENTS" -eq 1 ] || return 0
@@ -519,11 +581,9 @@ inject_comments() {
     tag="$(seedhash "cmt::${f#"$OUT"/}" 16)"
     case "$f" in
       *.css|*.CSS|*.js|*.JS)
-        # /* build:<tag> */ в начало файла.
         printf '/* b:%s */\n' "$tag" | cat - "$f" > "$f.tmp" && mv "$f.tmp" "$f"
         ;;
       *.html|*.htm|*.HTML|*.HTM)
-        # <!-- b:<tag> --> сразу после первой строки (часто <!doctype>).
         awk -v t="$tag" 'NR==1{print; print "<!-- b:" t " -->"; next} {print}' \
           "$f" > "$f.tmp" && mv "$f.tmp" "$f"
         ;;
@@ -532,13 +592,7 @@ inject_comments() {
 }
 
 # ---------------------------------------------------------------------------
-# Шаг 5. "Джиттер" незначащих пробелов в CSS — меняет размер/побайтовый хеш
-#         файла, не затрагивая отображение: добавляет 0..2 хвостовых пробела
-#         к части строк и изредка пустую строку между правилами. Применяется
-#         ТОЛЬКО к CSS, где хвостовые пробелы и пустые строки всегда незначащи
-#         (в HTML возможен <pre>/<textarea>, в JS — шаблонные строки, поэтому
-#          там джиттер не используется — их уникальность обеспечивают
-#          переименование и комментарии-маркеры).
+# Шаг 5. "Джиттер" незначащих пробелов в CSS.
 # ---------------------------------------------------------------------------
 jitter_whitespace() {
   [ "$JITTER_WHITESPACE" -eq 1 ] || return 0
@@ -549,21 +603,18 @@ jitter_whitespace() {
     rel="${f#"$OUT"/}"
     awk -v seed="$(hashstr "${SEED}::ws::${rel}")" '
       BEGIN {
-        # Преобразуем hex-seed в число для srand (детерминизм по seed).
         n = 0; for (i = 1; i <= length(seed); i++) { n += index("0123456789abcdef", substr(seed,i,1)) * i }
         srand(n)
       }
       {
         line = $0
-        # Хвостовые пробелы к "кодовым"/пустым строкам.
         if (line ~ /[{};]/ || line ~ /^[[:space:]]*$/) {
-          k = int(rand() * 3)         # 0..2 пробела
+          k = int(rand() * 3)
           pad = ""
           for (i = 0; i < k; i++) pad = pad " "
           line = line pad
         }
         print line
-        # Иногда вставляем пустую строку после закрывающей скобки правила.
         if (line ~ /[}]/ && rand() < 0.15) print ""
       }
     ' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
@@ -573,8 +624,6 @@ jitter_whitespace() {
 # --------------------------------- выполнение --------------------------------
 log "шаг 1: переименование классов/id"
 rename_tokens
-log "шаг 2: переименование CSS-переменных"
-rename_css_vars
 log "шаг 3: чистка <meta generator>"
 strip_generator
 log "шаг 4: вставка комментариев-маркеров"
@@ -582,16 +631,23 @@ inject_comments
 log "шаг 5: джиттер пробелов"
 jitter_whitespace
 
-# Сводный отчёт: записываем манифест сборки (seed + карта токенов), чтобы
-# при необходимости повторить или продолжить уникализацию.
+# Сводный отчёт: манифест сборки (seed + карты токенов/переменных).
 {
   printf 'seed=%s\n' "$SEED"
   printf 'prefix=%s\n' "$PREFIX"
   printf 'generated_at=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  printf 'auto_tokens=%s scan_html=%s include_reserved=%s\n' "$AUTO_TOKENS" "$SCAN_HTML" "$INCLUDE_RESERVED"
+  printf 'classes=%s vars=%s\n' "${#TOKEN_LIST[@]}" "${#VAR_LIST[@]}"
   if [ "${#TOKEN_LIST[@]}" -gt 0 ]; then
     printf 'token_map:\n'
     for t in "${TOKEN_LIST[@]}"; do
       printf '  %s -> %s\n' "$t" "$(genname "class::$t")"
+    done
+  fi
+  if [ "$RENAME_VARS" -eq 1 ] && [ "${#VAR_LIST[@]}" -gt 0 ]; then
+    printf 'var_map:\n'
+    for v in "${VAR_LIST[@]}"; do
+      printf '  --%s -> --%s\n' "$v" "$(genname "var::$v")"
     done
   fi
 } > "$OUT/.uniquify-manifest.txt"
@@ -600,18 +656,15 @@ jitter_whitespace
 OUT_PACKED=0
 if [ "$MAKE_ZIP" -eq 1 ]; then
   command -v zip >/dev/null 2>&1 || die "не найдена утилита zip (установите её или используйте --no-zip)"
-  # Готовим целевую папку под архив и удаляем прежний файл, чтобы не дописывать.
   zip_dir="$(dirname "$ZIP_OUT")"
   mkdir -p "$zip_dir"
   ZIP_OUT="$(cd "$zip_dir" && pwd)/$(basename "$ZIP_OUT")"
   rm -f "$ZIP_OUT"
   log "упаковываю $OUT -> $ZIP_OUT"
-  # Архивируем содержимое папки (а не саму папку): заходим внутрь OUT.
   ( cd "$OUT" && zip -r -q "$ZIP_OUT" . ) || die "не удалось создать архив: $ZIP_OUT"
   OUT_PACKED=1
   printf 'Готово. Архив: %s\n' "$ZIP_OUT"
 else
-  # Папочный режим: переносим готовую сборку из временной папки в FINAL_OUT.
   [ -n "$FINAL_OUT" ] || FINAL_OUT="$SCRIPT_DIR/output"
   mkdir -p "$(dirname "$FINAL_OUT")"
   rm -rf "$FINAL_OUT"
