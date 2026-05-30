@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vibrai — AI online photo editor</title>
+  <meta name="description" content="Vibrai is an AI-powered online photo editor: open RAW from any digital camera, retouch portraits, upscale to 8K and recolor — right in your browser.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="stylesheet" href="assets/css/style.css?v=1780172641">
+</head>
+<body data-title-key="hero_eyebrow">
+
+  <header class="site-header">
+    <div class="wrap">
+      <nav class="nav">
+        <a class="brand" href="index.html"><span class="mark">V</span>Vibr<b>ai</b></a>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="#tiles" data-i18n="nav_features"></a></li>
+          <li><a href="#how" data-i18n="nav_how"></a></li>
+          <li><a href="#gallery" data-i18n="nav_gallery"></a></li>
+          <li><a href="pricing.html" data-i18n="nav_pricing"></a></li>
+          <li><a href="#faq" data-i18n="nav_faq"></a></li>
+        </ul>
+        <div class="nav-actions">
+          <div class="lang">
+            <button class="lang-btn" aria-label="Language"><span data-lang-cur>EN</span><span class="caret"></span></button>
+            <div class="lang-menu"><button data-lang="ru"></button><button data-lang="en"></button><button data-lang="de"></button></div>
+          </div>
+          <button class="btn btn-ghost btn-sm" data-open="modal-login" data-i18n="btn_signin"></button>
+          <button class="btn btn-primary btn-sm" data-open="modal-register" data-i18n="btn_invite"></button>
+          <button class="nav-toggle" id="nav-toggle" data-i18n-title="menu"><span></span></button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="hero">
+      <div class="hero-photo" id="hero-photo"></div>
+      <div class="hero-grid"></div>
+      <div class="wrap">
+        <div class="hero-copy">
+          <span class="eyebrow" data-i18n="hero_eyebrow"></span>
+          <h1><span data-i18n="hero_h1a"></span> <em data-i18n="hero_em"></em></h1>
+          <p data-i18n="hero_p"></p>
+          <div class="hero-cta">
+            <button class="btn btn-primary btn-lg" data-open="modal-register" data-i18n="hero_cta1"></button>
+            <a href="pricing.html" class="btn btn-ghost btn-lg" data-i18n="hero_cta2"></a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat"><b data-count="48" data-suffix="M+">0</b><span data-i18n="stat1"></span></div>
+            <div class="stat"><b data-count="120" data-suffix="+">0</b><span data-i18n="stat2"></span></div>
+            <div class="stat"><b data-count="40" data-suffix="+">0</b><span data-i18n="stat3"></span></div>
+          </div>
+        </div>
+        <div class="ba">
+          <img class="before" src="assets/img/ba-before.jpg" alt="">
+          <img class="after" src="assets/img/ba-after.jpg" alt="">
+          <div class="divider"></div>
+          <div class="handle"></div>
+          <span class="tag l" data-i18n="ba_before"></span>
+          <span class="tag r" data-i18n="ba_after"></span>
+          <input type="range" min="0" max="100" value="50" aria-label="Before / after">
+        </div>
+      </div>
+    </section>
+
+    <section class="trust">
+      <div class="wrap">
+        <span data-i18n="trust"></span>
+      </div>
+    </section>
+
+    <section class="section" id="tiles">
+      <div class="wrap">
+        <div class="section-head" data-reveal>
+          <div>
+            <span class="eyebrow" data-i18n="tiles_eyebrow"></span>
+            <h2><span data-i18n="tiles_h2a"></span><span data-i18n="tiles_h2s"></span></h2>
+            <p class="lead" data-i18n="tiles_lead"></p>
+          </div>
+        </div>
+        <div class="tiles" data-reveal>
+          <a class="tile" href="features.html"><img src="assets/img/tile-retouch.jpg" alt=""><span class="pill">AI</span><div class="cap"><h3 data-i18n="t_retouch_t"></h3><p data-i18n="t_retouch_d"></p></div></a>
+          <a class="tile" href="features.html"><img src="assets/img/tile-raw.jpg" alt=""><span class="pill">RAW</span><div class="cap"><h3 data-i18n="t_raw_t"></h3><p data-i18n="t_raw_d"></p></div></a>
+          <a class="tile" href="features.html"><img src="assets/img/tile-sky.jpg" alt=""><span class="pill">AI</span><div class="cap"><h3 data-i18n="t_sky_t"></h3><p data-i18n="t_sky_d"></p></div></a>
+          <a class="tile" href="features.html"><img src="assets/img/tile-upscale.jpg" alt=""><span class="pill">AI</span><div class="cap"><h3 data-i18n="t_upscale_t"></h3><p data-i18n="t_upscale_d"></p></div></a>
+          <a class="tile" href="features.html"><img src="assets/img/tile-objectremove.jpg" alt=""><span class="pill">AI</span><div class="cap"><h3 data-i18n="t_object_t"></h3><p data-i18n="t_object_d"></p></div></a>
+          <a class="tile" href="features.html"><img src="assets/img/tile-portrait.jpg" alt=""><div class="cap"><h3 data-i18n="t_portrait_t"></h3><p data-i18n="t_portrait_d"></p></div></a>
+          <a class="tile" href="features.html"><img src="assets/img/tile-landscape.jpg" alt=""><div class="cap"><h3 data-i18n="t_landscape_t"></h3><p data-i18n="t_landscape_d"></p></div></a>
+          <a class="tile" href="features.html"><img src="assets/img/tile-bgremove.jpg" alt=""><span class="pill">PRO</span><div class="cap"><h3 data-i18n="t_bg_t"></h3><p data-i18n="t_bg_d"></p></div></a>
+          <a class="tile" href="features.html"><img src="assets/img/tile-denoise.jpg" alt=""><span class="pill">AI</span><div class="cap"><h3 data-i18n="t_denoise_t"></h3><p data-i18n="t_denoise_d"></p></div></a>
+          <a class="tile" href="features.html"><img src="assets/img/tile-creative.jpg" alt=""><div class="cap"><h3 data-i18n="t_creative_t"></h3><p data-i18n="t_creative_d"></p></div></a>
+          <a class="tile" href="features.html"><img src="assets/img/tile-product.jpg" alt=""><div class="cap"><h3 data-i18n="t_product_t"></h3><p data-i18n="t_product_d"></p></div></a>
+          <a class="tile" href="features.html"><img src="assets/img/tile-batch.jpg" alt=""><span class="pill">PRO</span><div class="cap"><h3 data-i18n="t_batch_t"></h3><p data-i18n="t_batch_d"></p></div></a>
+          <a class="tile" href="features.html"><img src="assets/img/tile-relight.jpg" alt=""><div class="cap"><h3 data-i18n="t_relight_t"></h3><p data-i18n="t_relight_d"></p></div></a>
+          <a class="tile" href="features.html"><img src="assets/img/tile-color.jpg" alt=""><div class="cap"><h3 data-i18n="t_color_t"></h3><p data-i18n="t_color_d"></p></div></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ai" style="background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+      <div class="wrap">
+        <div class="section-head" data-reveal>
+          <div>
+            <span class="eyebrow" data-i18n="feat_eyebrow"></span>
+            <h2><span data-i18n="feat_h2a"></span><span data-i18n="feat_h2s"></span></h2>
+            <p class="lead" data-i18n="feat_lead"></p>
+          </div>
+        </div>
+        <div class="feat-grid" data-reveal>
+          <div class="feat"><div class="ic">⤢</div><h3 data-i18n="f1_t"></h3><p data-i18n="f1_d"></p></div>
+          <div class="feat"><div class="ic">✦</div><h3 data-i18n="f2_t"></h3><p data-i18n="f2_d"></p></div>
+          <div class="feat"><div class="ic">☁</div><h3 data-i18n="f3_t"></h3><p data-i18n="f3_d"></p></div>
+          <div class="feat"><div class="ic">⌫</div><h3 data-i18n="f4_t"></h3><p data-i18n="f4_d"></p></div>
+          <div class="feat"><div class="ic">◐</div><h3 data-i18n="f5_t"></h3><p data-i18n="f5_d"></p></div>
+          <div class="feat"><div class="ic">☺</div><h3 data-i18n="f6_t"></h3><p data-i18n="f6_d"></p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="upload">
+      <div class="wrap">
+        <div class="section-head" data-reveal>
+          <div>
+            <span class="eyebrow" data-i18n="up_eyebrow"></span>
+            <h2><span data-i18n="up_h2a"></span><span data-i18n="up_h2s"></span></h2>
+            <p class="lead" data-i18n="up_lead"></p>
+          </div>
+        </div>
+        <div data-reveal style="max-width:820px;margin:0 auto">
+          <div class="uploader" id="uploader">
+            <div class="big">⬆</div>
+            <h3 data-i18n="up_title"></h3>
+            <p data-i18n="up_p"></p>
+            <div class="formats">
+              <span class="fmt">CR3</span><span class="fmt">NEF</span><span class="fmt">ARW</span><span class="fmt">RAF</span><span class="fmt">DNG</span><span class="fmt">ORF</span><span class="fmt">RW2</span><span class="fmt">TIFF</span><span class="fmt">JPEG</span><span class="fmt">PNG</span>
+            </div>
+            <div style="margin-top:18px"><span class="btn btn-primary" data-i18n="up_btn"></span></div>
+            <input type="file" id="upload-input" multiple accept="image/*,.cr2,.cr3,.nef,.arw,.raf,.dng,.orf,.rw2,.tif,.tiff" hidden>
+          </div>
+          <div class="upload-list" id="upload-list"></div>
+          <p class="muted" style="text-align:center;font-size:13px;margin-top:14px" data-i18n="up_note"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how" style="background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+      <div class="wrap">
+        <div class="section-head" data-reveal>
+          <div>
+            <span class="eyebrow" data-i18n="how_eyebrow"></span>
+            <h2><span data-i18n="how_h2a"></span><span data-i18n="how_h2s"></span></h2>
+          </div>
+        </div>
+        <div class="steps" data-reveal>
+          <div class="step"><div class="n"></div><h3 data-i18n="s1_t"></h3><p data-i18n="s1_d"></p></div>
+          <div class="step"><div class="n"></div><h3 data-i18n="s2_t"></h3><p data-i18n="s2_d"></p></div>
+          <div class="step"><div class="n"></div><h3 data-i18n="s3_t"></h3><p data-i18n="s3_d"></p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gallery" id="gallery">
+      <div class="wrap">
+        <div class="section-head" data-reveal>
+          <div>
+            <span class="eyebrow" data-i18n="gal_eyebrow"></span>
+            <h2><span data-i18n="gal_h2a"></span><span data-i18n="gal_h2s"></span></h2>
+            <p class="lead" data-i18n="gal_lead"></p>
+          </div>
+          <div class="gal-nav">
+            <button data-gal="prev" aria-label="Previous">‹</button>
+            <button data-gal="next" aria-label="Next">›</button>
+          </div>
+        </div>
+        <div class="gal-track" data-reveal>
+          <div class="gal-item"><img src="assets/img/g1.jpg" alt=""></div>
+          <div class="gal-item"><img src="assets/img/g2.jpg" alt=""></div>
+          <div class="gal-item"><img src="assets/img/g3.jpg" alt=""></div>
+          <div class="gal-item"><img src="assets/img/g4.jpg" alt=""></div>
+          <div class="gal-item"><img src="assets/img/g5.jpg" alt=""></div>
+          <div class="gal-item"><img src="assets/img/g6.jpg" alt=""></div>
+          <div class="gal-item"><img src="assets/img/tile-retouch.jpg" alt=""></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="reviews" style="background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+      <div class="wrap">
+        <div class="section-head" data-reveal>
+          <div>
+            <span class="eyebrow" data-i18n="tmt_eyebrow"></span>
+            <h2><span data-i18n="tmt_h2a"></span><span data-i18n="tmt_h2s"></span></h2>
+          </div>
+        </div>
+        <div class="tmt-grid" data-reveal>
+          <div class="tmt"><div class="stars">★★★★★</div><p data-i18n="tm1"></p><div class="who"><img src="assets/img/av1.jpg" alt=""><div><b data-i18n="tm1n"></b><span data-i18n="tm1r"></span></div></div></div>
+          <div class="tmt"><div class="stars">★★★★★</div><p data-i18n="tm2"></p><div class="who"><img src="assets/img/av4.jpg" alt=""><div><b data-i18n="tm2n"></b><span data-i18n="tm2r"></span></div></div></div>
+          <div class="tmt"><div class="stars">★★★★★</div><p data-i18n="tm3"></p><div class="who"><img src="assets/img/av2.jpg" alt=""><div><b data-i18n="tm3n"></b><span data-i18n="tm3r"></span></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="wrap">
+        <div class="section-head" data-reveal>
+          <div><h2><span data-i18n="faq_h2a"></span><span data-i18n="faq_h2s"></span></h2></div>
+        </div>
+        <div class="faq" data-reveal>
+          <details class="qa"><summary data-i18n="q1"></summary><div class="a" data-i18n="a1"></div></details>
+          <details class="qa"><summary data-i18n="q2"></summary><div class="a" data-i18n="a2"></div></details>
+          <details class="qa"><summary data-i18n="q3"></summary><div class="a" data-i18n="a3"></div></details>
+          <details class="qa"><summary data-i18n="q4"></summary><div class="a" data-i18n="a4"></div></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cta-band" id="invite">
+      <div class="wrap" data-reveal>
+        <div>
+          <span class="eyebrow" data-i18n="cta_eyebrow"></span>
+          <h2><span data-i18n="cta_h2a"></span><span data-i18n="cta_h2s"></span></h2>
+          <p data-i18n="cta_p"></p>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-lg" data-open="modal-register" data-i18n="cta_btn1"></button>
+          <button class="btn btn-ghost btn-lg" data-open="modal-login" data-i18n="cta_btn2"></button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div class="foot-col foot-brand">
+          <a class="brand" href="index.html"><span class="mark">V</span>Vibr<b>ai</b></a>
+          <p data-i18n="foot_about"></p>
+        </div>
+        <div class="foot-col">
+          <h5 data-i18n="foot_h1"></h5>
+          <a href="index.html#tiles" data-i18n="foot_features"></a>
+          <a href="pricing.html" data-i18n="foot_pricing"></a>
+          <a href="index.html#gallery" data-i18n="foot_gallery"></a>
+          <a href="index.html#how" data-i18n="foot_how"></a>
+        </div>
+        <div class="foot-col">
+          <h5 data-i18n="foot_h2"></h5>
+          <a href="about.html" data-i18n="foot_about_l"></a>
+          <a href="contact.html" data-i18n="foot_contact"></a>
+          <a href="features.html" data-i18n="nav_features"></a>
+        </div>
+        <div class="foot-col">
+          <h5 data-i18n="foot_h3"></h5>
+          <a href="status.html" data-i18n="foot_status"></a>
+          <a href="index.html#faq" data-i18n="foot_faq"></a>
+          <button class="linklike" data-open="modal-send" data-i18n="foot_help"></button>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>© <span id="year">2026</span> Vibrai. <span data-i18n="foot_rights"></span></span>
+        <span data-i18n="foot_note"></span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal-root" id="modal-register">
+    <div class="backdrop"></div>
+    <div class="modal">
+      <button class="close" data-close data-i18n-title="close">×</button>
+      <h3 data-i18n="reg_h3"></h3>
+      <p class="sub" data-i18n="reg_sub"></p>
+      <div class="invite-hint"><span data-i18n="reg_hint"></span> <code>VIBRAI-2026</code>, <code>PRO-INVITE</code>, <code>STUDIO-VIP</code></div>
+      <form id="form-register" novalidate>
+        <div class="field code"><label data-i18n="reg_code"></label><input name="code" data-i18n-ph="ph_code" autocomplete="off"></div>
+        <div class="field"><label data-i18n="reg_email"></label><input name="email" type="email" data-i18n-ph="ph_email" autocomplete="email"></div>
+        <div class="field"><label data-i18n="reg_pass"></label><input name="password" type="password" data-i18n-ph="reg_pass_ph" autocomplete="new-password"></div>
+        <div class="form-msg"></div>
+        <button class="btn btn-primary btn-block" type="submit" data-i18n="reg_btn"></button>
+      </form>
+      <div class="modal-foot"><span data-i18n="reg_foot"></span> <a data-switch="modal-login" data-i18n="reg_foot_l"></a></div>
+    </div>
+  </div>
+
+  <div class="modal-root" id="modal-login">
+    <div class="backdrop"></div>
+    <div class="modal">
+      <button class="close" data-close data-i18n-title="close">×</button>
+      <h3 data-i18n="log_h3"></h3>
+      <p class="sub" data-i18n="log_sub"></p>
+      <form id="form-login" novalidate>
+        <div class="field"><label data-i18n="log_email"></label><input name="email" type="email" data-i18n-ph="ph_email" autocomplete="email"></div>
+        <div class="field"><label data-i18n="log_pass"></label><input name="password" type="password" data-i18n-ph="log_pass_ph" autocomplete="current-password"></div>
+        <div class="form-msg"></div>
+        <button class="btn btn-primary btn-block" type="submit" data-i18n="log_btn"></button>
+      </form>
+      <div class="modal-foot"><span data-i18n="log_foot"></span> <a data-switch="modal-register" data-i18n="log_foot_l"></a></div>
+    </div>
+  </div>
+
+  <div class="modal-root" id="modal-send">
+    <div class="backdrop"></div>
+    <div class="modal">
+      <button class="close" data-close data-i18n-title="close">×</button>
+      <h3 data-i18n="send_h3"></h3>
+      <p class="sub" data-i18n="send_sub"></p>
+      <form class="send-form" novalidate>
+        <div class="field"><label data-i18n="send_email"></label><input name="email" type="email" data-i18n-ph="ph_email" autocomplete="email"></div>
+        <div class="field"><label data-i18n="send_topic"></label>
+          <select name="topic">
+            <option data-i18n="topic_general"></option>
+            <option data-i18n="topic_support"></option>
+            <option data-i18n="topic_billing"></option>
+            <option data-i18n="topic_partner"></option>
+          </select>
+        </div>
+        <div class="field"><label data-i18n="send_msg"></label><textarea name="message" data-i18n-ph="send_msg_ph"></textarea></div>
+        <div class="form-msg"></div>
+        <button class="btn btn-primary btn-block" type="submit" data-i18n="send_btn"></button>
+      </form>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js?v=1780172641"></script>
+</body>
+</html>

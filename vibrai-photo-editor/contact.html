@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Vibrai</title>
+  <meta name="description" content="Contact the Vibrai team — support, billing, partnerships and press. Reach us through the form.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="stylesheet" href="assets/css/style.css?v=1780172641">
+</head>
+<body data-title-key="foot_contact">
+
+  <header class="site-header">
+    <div class="wrap">
+      <nav class="nav">
+        <a class="brand" href="index.html"><span class="mark">V</span>Vibr<b>ai</b></a>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="features.html" data-i18n="nav_features"></a></li>
+          <li><a href="index.html#how" data-i18n="nav_how"></a></li>
+          <li><a href="index.html#gallery" data-i18n="nav_gallery"></a></li>
+          <li><a href="pricing.html" data-i18n="nav_pricing"></a></li>
+          <li><a href="index.html#faq" data-i18n="nav_faq"></a></li>
+        </ul>
+        <div class="nav-actions">
+          <div class="lang">
+            <button class="lang-btn" aria-label="Language"><span data-lang-cur>EN</span><span class="caret"></span></button>
+            <div class="lang-menu"><button data-lang="ru"></button><button data-lang="en"></button><button data-lang="de"></button></div>
+          </div>
+          <button class="btn btn-ghost btn-sm" data-open="modal-login" data-i18n="btn_signin"></button>
+          <button class="btn btn-primary btn-sm" data-open="modal-register" data-i18n="btn_invite"></button>
+          <button class="nav-toggle" id="nav-toggle" data-i18n-title="menu"><span></span></button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="wrap">
+        <span class="eyebrow" data-i18n="foot_contact"></span>
+        <h1><span data-i18n="contact_h1a"></span><span data-i18n="contact_h1s"></span></h1>
+        <p data-i18n="contact_p"></p>
+      </div>
+    </section>
+
+    <section class="page-section">
+      <div class="wrap">
+        <div class="prose" style="max-width:700px">
+          <div style="margin-bottom:22px"><button class="btn btn-primary btn-lg" data-open="modal-send" data-i18n="contact_send"></button></div>
+          <div class="contact-card"><h3 data-i18n="c1_t"></h3><p data-i18n="c1_d"></p><button class="btn btn-ghost btn-sm" data-open="modal-send" data-i18n="contact_send"></button></div>
+          <div class="contact-card"><h3 data-i18n="c2_t"></h3><p data-i18n="c2_d"></p><button class="btn btn-ghost btn-sm" data-open="modal-send" data-i18n="contact_send"></button></div>
+          <div class="contact-card"><h3 data-i18n="c3_t"></h3><p data-i18n="c3_d"></p><button class="btn btn-ghost btn-sm" data-open="modal-send" data-i18n="contact_send"></button></div>
+          <div class="contact-card"><h3 data-i18n="c4_t"></h3><p data-i18n="c4_d"></p><button class="btn btn-ghost btn-sm" data-open="modal-send" data-i18n="contact_send"></button></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div class="foot-col foot-brand"><a class="brand" href="index.html"><span class="mark">V</span>Vibr<b>ai</b></a><p data-i18n="foot_about"></p></div>
+        <div class="foot-col"><h5 data-i18n="foot_h1"></h5><a href="index.html#tiles" data-i18n="foot_features"></a><a href="pricing.html" data-i18n="foot_pricing"></a><a href="index.html#gallery" data-i18n="foot_gallery"></a><a href="index.html#how" data-i18n="foot_how"></a></div>
+        <div class="foot-col"><h5 data-i18n="foot_h2"></h5><a href="about.html" data-i18n="foot_about_l"></a><a href="contact.html" data-i18n="foot_contact"></a><a href="features.html" data-i18n="nav_features"></a></div>
+        <div class="foot-col"><h5 data-i18n="foot_h3"></h5><a href="status.html" data-i18n="foot_status"></a><a href="index.html#faq" data-i18n="foot_faq"></a><button class="linklike" data-open="modal-send" data-i18n="foot_help"></button></div>
+      </div>
+      <div class="foot-bottom"><span>© <span id="year">2026</span> Vibrai. <span data-i18n="foot_rights"></span></span><span data-i18n="foot_note"></span></div>
+    </div>
+  </footer>
+
+  <div class="modal-root" id="modal-register"><div class="backdrop"></div><div class="modal">
+    <button class="close" data-close data-i18n-title="close">×</button>
+    <h3 data-i18n="reg_h3"></h3><p class="sub" data-i18n="reg_sub"></p>
+    <div class="invite-hint"><span data-i18n="reg_hint"></span> <code>VIBRAI-2026</code>, <code>PRO-INVITE</code>, <code>STUDIO-VIP</code></div>
+    <form id="form-register" novalidate>
+      <div class="field code"><label data-i18n="reg_code"></label><input name="code" data-i18n-ph="ph_code" autocomplete="off"></div>
+      <div class="field"><label data-i18n="reg_email"></label><input name="email" type="email" data-i18n-ph="ph_email" autocomplete="email"></div>
+      <div class="field"><label data-i18n="reg_pass"></label><input name="password" type="password" data-i18n-ph="reg_pass_ph" autocomplete="new-password"></div>
+      <div class="form-msg"></div>
+      <button class="btn btn-primary btn-block" type="submit" data-i18n="reg_btn"></button>
+    </form>
+    <div class="modal-foot"><span data-i18n="reg_foot"></span> <a data-switch="modal-login" data-i18n="reg_foot_l"></a></div>
+  </div></div>
+
+  <div class="modal-root" id="modal-login"><div class="backdrop"></div><div class="modal">
+    <button class="close" data-close data-i18n-title="close">×</button>
+    <h3 data-i18n="log_h3"></h3><p class="sub" data-i18n="log_sub"></p>
+    <form id="form-login" novalidate>
+      <div class="field"><label data-i18n="log_email"></label><input name="email" type="email" data-i18n-ph="ph_email" autocomplete="email"></div>
+      <div class="field"><label data-i18n="log_pass"></label><input name="password" type="password" data-i18n-ph="log_pass_ph" autocomplete="current-password"></div>
+      <div class="form-msg"></div>
+      <button class="btn btn-primary btn-block" type="submit" data-i18n="log_btn"></button>
+    </form>
+    <div class="modal-foot"><span data-i18n="log_foot"></span> <a data-switch="modal-register" data-i18n="log_foot_l"></a></div>
+  </div></div>
+
+  <div class="modal-root" id="modal-send"><div class="backdrop"></div><div class="modal">
+    <button class="close" data-close data-i18n-title="close">×</button>
+    <h3 data-i18n="send_h3"></h3><p class="sub" data-i18n="send_sub"></p>
+    <form class="send-form" novalidate>
+      <div class="field"><label data-i18n="send_email"></label><input name="email" type="email" data-i18n-ph="ph_email" autocomplete="email"></div>
+      <div class="field"><label data-i18n="send_topic"></label><select name="topic"><option data-i18n="topic_general"></option><option data-i18n="topic_support"></option><option data-i18n="topic_billing"></option><option data-i18n="topic_partner"></option></select></div>
+      <div class="field"><label data-i18n="send_msg"></label><textarea name="message" data-i18n-ph="send_msg_ph"></textarea></div>
+      <div class="form-msg"></div>
+      <button class="btn btn-primary btn-block" type="submit" data-i18n="send_btn"></button>
+    </form>
+  </div></div>
+
+  <script src="assets/js/app.js?v=1780172641"></script>
+</body>
+</html>
