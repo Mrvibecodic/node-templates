@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>node-templates — витрина шаблонов</title>
   <meta name="description" content="Коллекция статических, готовых к деплою шаблонов сайтов на чистом HTML/CSS/JS. Живые демо и исходники.">
-  <!-- OG / link preview -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="node-templates">
   <meta property="og:title" content="node-templates — витрина шаблонов">
@@ -27,14 +26,13 @@
     }
     *{box-sizing:border-box}
     body{margin:0;background:radial-gradient(1200px 600px at 80% -10%,rgba(124,92,255,.18),transparent 60%),radial-gradient(900px 500px at 0% 0%,rgba(11,198,227,.12),transparent 55%),var(--bg);
-      color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,sans-serif;line-height:1.55}
+      color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,sans-serif;line-height:1.55;min-height:100vh;display:flex;flex-direction:column}
     a{color:inherit;text-decoration:none}
-    .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+    .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;width:100%}
     header.hero{padding:72px 0 40px;text-align:center}
     .eyebrow{display:inline-block;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);
       border:1px solid var(--line);border-radius:999px;padding:6px 14px;margin-bottom:20px;background:rgba(255,255,255,.02)}
-    h1{font-family:Rajdhani,sans-serif;font-weight:700;font-size:clamp(34px,6vw,60px);line-height:1.04;margin:0 0 16px;
-      letter-spacing:.5px}
+    h1{font-family:Rajdhani,sans-serif;font-weight:700;font-size:clamp(34px,6vw,60px);line-height:1.04;margin:0 0 16px;letter-spacing:.5px}
     h1 span{background:linear-gradient(90deg,var(--accent),var(--brand));-webkit-background-clip:text;background-clip:text;color:transparent}
     .sub{max-width:680px;margin:0 auto;color:var(--muted);font-size:18px}
     .meta{margin-top:22px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
@@ -43,7 +41,7 @@
     .notice .inner{display:flex;gap:12px;align-items:flex-start;background:rgba(255,59,92,.08);border:1px solid rgba(255,59,92,.3);
       border-radius:12px;padding:12px 16px;color:#ffd7de;font-size:14px}
     .notice b{color:#fff}
-    section.grid-sec{padding:34px 0 80px}
+    section.grid-sec{padding:34px 0 80px;flex:1}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:26px}
     .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
       display:flex;flex-direction:column;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
@@ -51,19 +49,20 @@
     .thumb{position:relative;aspect-ratio:4/3;background-size:cover;background-position:top center}
     .thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,14,19,0) 64%,rgba(11,14,19,.92) 100%)}
     .panel{position:absolute;left:13px;right:13px;bottom:12px;z-index:1;background:rgba(11,14,19,.62);
-      backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.08);
-      border-radius:11px;padding:9px 13px}
+      backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:9px 13px}
     .tag{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
     .panel h3{font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;margin:2px 0 4px;letter-spacing:.4px}
     .panel p{margin:0;font-size:13.5px;color:#cfd6e4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     .actions{display:flex;gap:10px;padding:14px}
-    .btn{flex:1;text-align:center;font-size:14px;font-weight:600;padding:10px 12px;border-radius:10px;border:1px solid var(--line);
-      transition:background .15s,border-color .15s}
+    .btn{flex:1;text-align:center;font-size:14px;font-weight:600;padding:10px 12px;border-radius:10px;border:1px solid var(--line);transition:background .15s,border-color .15s}
     .btn-primary{background:linear-gradient(90deg,var(--accent),var(--brand));color:#0b0e13;border:none}
     .btn-primary:hover{filter:brightness(1.08)}
     .btn-ghost:hover{background:var(--surface-2);border-color:var(--accent)}
-    footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:var(--muted);font-size:14px}
-    footer a{color:var(--accent)}
+    footer.site-foot{border-top:1px solid var(--line);background:rgba(11,14,19,.4);margin-top:auto}
+    footer.site-foot .wrap{padding:24px 22px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px 18px;color:var(--muted);font-size:14px}
+    footer.site-foot a{color:var(--accent);font-weight:500}
+    footer.site-foot a:hover{text-decoration:underline}
+    @media (max-width:560px){footer.site-foot .wrap{justify-content:center;text-align:center}}
   </style>
 </head>
 <body>
@@ -91,12 +90,14 @@
     </div>
   </section>
 
-  <footer class="wrap">
-    Исходники: <a href="https://github.com/Mrvibecodic/node-templates">github.com/Mrvibecodic/node-templates</a> · вдохновлено <a href="https://github.com/SmallPoppa">SmallPoppa</a>
+  <footer class="site-foot">
+    <div class="wrap">
+      <span>© <span id="year">2026</span> node-templates · чистый HTML&nbsp;+&nbsp;CSS&nbsp;+&nbsp;JS</span>
+      <span>Исходники: <a href="https://github.com/Mrvibecodic/node-templates">github.com/Mrvibecodic/node-templates</a> · вдохновлено <a href="https://github.com/SmallPoppa">SmallPoppa</a></span>
+    </div>
   </footer>
 
   <script>
-    // Список шаблонов. Добавить новый = добавить объект сюда.
     const REPO = "https://github.com/Mrvibecodic/node-templates/tree/main";
     const TEMPLATES = [
       {
@@ -113,4 +114,26 @@
         img: "previews/esports-stream-template.png",
         desc: "Лендинг круглосуточной киберспортивной трансляции: вкладки живых стримов по играм, расписание турниров, флоу закрытого членства и внутренние страницы.",
         demo: "esports-stream-template/",
-        code: REP
+        code: REPO + "/esports-stream-template"
+      }
+    ];
+    const grid = document.getElementById("grid");
+    grid.innerHTML = TEMPLATES.map(function (t) {
+      return '<article class="card">' +
+        '<div class="thumb" style="background-image:url(\'' + t.img + '\')">' +
+          '<div class="panel">' +
+            '<div class="tag">' + t.tag + '</div>' +
+            '<h3>' + t.name + '</h3>' +
+            '<p>' + t.desc + '</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="actions">' +
+          '<a class="btn btn-primary" href="' + t.demo + '">Демо</a>' +
+          '<a class="btn btn-ghost" href="' + t.code + '">Репозиторий</a>' +
+        '</div>' +
+      '</article>';
+    }).join("");
+    var y = document.getElementById("year"); if (y) y.textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
