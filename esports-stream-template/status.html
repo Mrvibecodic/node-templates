@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Status — ArenaCast</title>
+  <meta name="description" content="ArenaCast system status — live view of platform components and recent incidents.">
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=1780166433">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <nav class="nav">
+        <a class="brand" href="index.html"><img class="logo" src="assets/img/logo.svg" alt="ArenaCast">Arena<b>Cast</b></a>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="index.html#streams">Live Streams</a></li>
+          <li><a href="index.html#schedule">Schedule</a></li>
+          <li><a href="index.html#games">Games</a></li>
+          <li><a href="index.html#join">Membership</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a class="btn btn-ghost btn-sm" href="index.html#streams">Watch live</a>
+          <a class="btn btn-primary btn-sm" href="index.html#join">Membership</a>
+          <button class="nav-toggle" id="nav-toggle" aria-label="Menu"><span></span></button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="wrap">
+        <span class="eyebrow">Status</span>
+        <h1>System <span>status</span></h1>
+        <p>A live view of ArenaCast's platform components. For an outage that isn't reflected here, <a href="contact.html" style="color:var(--accent);font-weight:700">let us know</a>.</p>
+      </div>
+    </section>
+
+    <section class="page-section">
+      <div class="wrap">
+        <div class="prose" style="max-width:760px;margin-bottom:24px">
+          <div class="notice" style="border-left-color:var(--win)">
+            <span class="badge" style="background:rgba(52,211,153,.14);color:var(--win)">All systems operational</span>
+            <p>All core services are running normally. This page is a demo and does not reflect a real monitoring feed.</p>
+          </div>
+        </div>
+        <div style="max-width:760px">
+          <div class="status-row"><span class="name">Stream grid</span><span class="state"><span class="dot"></span>Operational</span></div>
+          <div class="status-row"><span class="name">Schedule service</span><span class="state"><span class="dot"></span>Operational</span></div>
+          <div class="status-row"><span class="name">Twitch player relay</span><span class="state"><span class="dot"></span>Operational</span></div>
+          <div class="status-row warn"><span class="name">Match reminders</span><span class="state"><span class="dot"></span>Degraded</span></div>
+          <div class="status-row"><span class="name">Accounts &amp; sign-in</span><span class="state"><span class="dot"></span>Operational</span></div>
+          <div class="status-row"><span class="name">Website &amp; CDN</span><span class="state"><span class="dot"></span>Operational</span></div>
+        </div>
+        <div class="prose" style="margin-top:30px">
+          <h2>Recent <span>incidents</span></h2>
+          <p>No incidents reported in the last 7 days. Reminder delivery is currently running with a short delay while we migrate the notification queue.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div class="foot-col foot-brand">
+          <a class="brand" href="index.html"><img class="logo" src="assets/img/logo.svg" alt="ArenaCast">Arena<b>Cast</b></a>
+          <p>A 24/7 esports broadcast hub — live tournaments, reruns and a unified schedule across CS2, Dota 2, LoL and StarCraft II.</p>
+        </div>
+        <div class="foot-col"><h5>Watch</h5><a href="index.html#streams">Live streams</a><a href="index.html#schedule">Schedule</a><a href="index.html#games">Games</a><a href="index.html#streams">Replays</a></div>
+        <div class="foot-col"><h5>Community</h5><a href="index.html#join">Membership</a><a href="partners.html">Partners</a><a href="careers.html">Careers</a><a href="contact.html">Contact</a></div>
+        <div class="foot-col"><h5>About</h5><a href="about.html">How it works</a><a href="press.html">Press kit</a><a href="contact.html">Contact</a><a href="status.html">Status</a></div>
+      </div>
+      <div class="foot-bottom">
+        <span>© <span id="year">2026</span> ArenaCast. Broadcasts are streamed via Twitch and belong to their respective operators (ESL, PGL, Riot Games).</span>
+        <span>Not affiliated with Twitch or the listed studios.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/app.js?v=1780166433"></script>
+</body>
+</html>

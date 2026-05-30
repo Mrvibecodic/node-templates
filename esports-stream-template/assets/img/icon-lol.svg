@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="600" y2="600" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#06222a"/><stop offset="1" stop-color="#030f14"/>
+    </linearGradient>
+    <linearGradient id="fg" x1="180" y1="140" x2="430" y2="460" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3be0f5"/><stop offset="1" stop-color="#0aa6c4"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#bg)"/>
+  <g opacity="0.07" fill="#0bc6e3"><circle cx="120" cy="130" r="3"/><circle cx="480" cy="160" r="3"/><circle cx="150" cy="470" r="3"/><circle cx="470" cy="480" r="3"/></g>
+  <path d="M300 110l160 92v196l-160 92-160-92V202z" fill="none" stroke="url(#fg)" stroke-width="18" stroke-linejoin="round"/>
+  <path d="M260 215v150h120" fill="none" stroke="url(#fg)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="300" cy="300" r="20" fill="url(#fg)" opacity="0.0"/>
+  <text x="300" y="558" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="58" fill="#0bc6e3" letter-spacing="6">LOL</text>
+</svg>

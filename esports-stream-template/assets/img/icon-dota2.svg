@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="600" y2="600" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2a0d0a"/><stop offset="1" stop-color="#0e0504"/>
+    </linearGradient>
+    <linearGradient id="fg" x1="180" y1="120" x2="420" y2="470" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff5a3c"/><stop offset="1" stop-color="#b81f12"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#bg)"/>
+  <g opacity="0.07" fill="#c23c2a"><circle cx="110" cy="140" r="3"/><circle cx="490" cy="170" r="3"/><circle cx="150" cy="480" r="3"/><circle cx="460" cy="460" r="3"/></g>
+  <path d="M300 120l150 70v110c0 95-62 150-150 180-88-30-150-85-150-180V190z" fill="none" stroke="url(#fg)" stroke-width="20" stroke-linejoin="round"/>
+  <path d="M300 200l70 34v92c0 60-34 92-70 110-36-18-70-50-70-110v-92z" fill="url(#fg)" opacity="0.92"/>
+  <path d="M300 250v160M250 320h100" stroke="#0e0504" stroke-width="16" stroke-linecap="round"/>
+  <text x="300" y="560" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="50" fill="#c23c2a" letter-spacing="3">DOTA 2</text>
+</svg>

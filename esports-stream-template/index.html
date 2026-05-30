@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArenaCast — 24/7 Esports Live Streaming</title>
+  <meta name="description" content="Round-the-clock esports broadcasts — CS2, Dota 2, League of Legends and StarCraft II. Live matches, reruns and a full tournament schedule in one arena.">
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=1780166433">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <nav class="nav">
+        <a class="brand" href="#top"><img class="logo" src="assets/img/logo.svg" alt="ArenaCast">Arena<b>Cast</b></a>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="#streams">Live Streams</a></li>
+          <li><a href="#schedule">Schedule</a></li>
+          <li><a href="#games">Games</a></li>
+          <li><a href="#join">Membership</a></li>
+        </ul>
+        <div class="nav-actions">
+          <button class="btn btn-ghost btn-sm" data-open="modal-login">Sign in</button>
+          <button class="btn btn-primary btn-sm" data-open="modal-register">Get invite</button>
+          <button class="nav-toggle" id="nav-toggle" aria-label="Menu"><span></span></button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <section class="hero">
+      <div class="hero-photo" id="hero-photo"></div>
+      <div class="hero-bg"></div>
+      <div class="wrap">
+        <div class="hero-copy">
+          <span class="eyebrow">Live now · 4 titles · 12 channels</span>
+          <h1>The arena never <em>goes dark</em></h1>
+          <p>Round-the-clock broadcasts from the world's biggest tournament operators. Live matches roll into reruns, reruns roll into the next region — esports without a closing whistle.</p>
+          <div class="hero-cta">
+            <a href="#streams" class="btn btn-primary">Watch live now</a>
+            <a href="#schedule" class="btn btn-ghost">View schedule</a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat"><b data-count="248" data-suffix="K">0</b><span>Watching now</span></div>
+            <div class="stat"><b data-count="12">0</b><span>24/7 channels</span></div>
+            <div class="stat"><b data-count="640" data-suffix="+">0</b><span>Events / year</span></div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="thumb">
+            <img src="assets/img/si-counterstrike.svg" alt="Featured broadcast" style="object-fit:contain;padding:18%;background:radial-gradient(circle at 50% 40%,#1a2030,#0b0d14)">
+            <a class="play" href="#streams" aria-label="Watch"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></a>
+            <div class="meta">
+              <span class="badge badge-live"><span class="dot"></span>Live · Main Stage</span>
+              <h4>ESL Pro League — Grand Final</h4>
+              <div class="row"><span class="viewers"><svg viewBox="0 0 24 24"><path d="M12 5C6.5 5 2.7 8.6 1 12c1.7 3.4 5.5 7 11 7s9.3-3.6 11-7c-1.7-3.4-5.5-7-11-7zm0 11a4 4 0 110-8 4 4 0 010 8z"/></svg> 48,210 watching</span> · CS2</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="streams">
+      <div class="wrap">
+        <div class="section-head" data-reveal>
+          <div>
+            <span class="eyebrow">Live & Reruns</span>
+            <h2>Streams by <span>game</span></h2>
+            <p class="lead">Official 24/7 channels from ESL, PGL and Riot Games. Pick a title — players load on demand.</p>
+          </div>
+          <div class="tabs" id="stream-tabs"></div>
+        </div>
+        <div class="stream-grid" id="stream-grid" data-reveal></div>
+      </div>
+    </section>
+
+    <section class="section" id="schedule" style="background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+      <div class="wrap">
+        <div class="section-head" data-reveal>
+          <div>
+            <span class="eyebrow">What's on</span>
+            <h2>Event <span>schedule</span></h2>
+            <p class="lead">Upcoming matches across every title, pulled into one timeline. Filter by game and set reminders.</p>
+          </div>
+        </div>
+        <div class="sched-toolbar" id="sched-filters" data-reveal></div>
+        <div class="sched-list" id="sched-list" data-reveal></div>
+      </div>
+    </section>
+
+    <section class="section" id="games">
+      <div class="wrap">
+        <div class="section-head" data-reveal>
+          <div>
+            <span class="eyebrow">Coverage</span>
+            <h2>Titles in <span>rotation</span></h2>
+          </div>
+          <a href="#streams" class="btn btn-ghost btn-sm">All channels</a>
+        </div>
+        <div class="games-grid" data-reveal>
+          <a href="#streams" class="game-card"><div class="ico-wrap"><img src="assets/img/si-counterstrike.svg" alt="Counter-Strike 2"></div><div class="cap"><p><span class="badge badge-live" style="padding:2px 7px"><span class="dot"></span>Live</span> CS2 · 2 channels</p><span class="arrow">→</span></div></a>
+          <a href="#streams" class="game-card"><div class="ico-wrap"><img src="assets/img/si-dota2.svg" alt="Dota 2"></div><div class="cap"><p><span class="badge badge-live" style="padding:2px 7px"><span class="dot"></span>Live</span> Dota 2 · 2 channels</p><span class="arrow">→</span></div></a>
+          <a href="#streams" class="game-card"><div class="ico-wrap"><img src="assets/img/si-leagueoflegends.svg" alt="League of Legends"></div><div class="cap"><p><span class="badge badge-live" style="padding:2px 7px"><span class="dot"></span>Live</span> LoL · 1 channel</p><span class="arrow">→</span></div></a>
+          <a href="#streams" class="game-card"><div class="ico-wrap"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/StarCraft_logo.svg" alt="StarCraft II" style="width:80%;height:auto" onerror="this.onerror=null;this.src='assets/img/si-battledotnet.svg';this.style.width='46%'"></div><div class="cap"><p><span class="badge badge-live" style="padding:2px 7px"><span class="dot"></span>Live</span> SC2 · 1 channel</p><span class="arrow">→</span></div></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cta-band" id="join">
+      <div class="wrap" data-reveal>
+        <div>
+          <span class="eyebrow">Invite-only · Currently closed</span>
+          <h2>Join the <span style="color:var(--accent)">members' arena</span></h2>
+          <p>New invites are closed for now while we scale up the broadcast relay. Already hold a code from a member or partner studio? You can still redeem it below. Otherwise, sign in to your existing account — public sign-ups reopen soon.</p>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button class="btn btn-primary" data-open="modal-register">Redeem invite code</button>
+          <button class="btn btn-ghost" data-open="modal-login">I already have an account</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div class="foot-col foot-brand">
+          <a class="brand" href="#top"><img class="logo" src="assets/img/logo.svg" alt="ArenaCast">Arena<b>Cast</b></a>
+          <p>A 24/7 esports broadcast hub — live tournaments, reruns and a unified schedule across CS2, Dota 2, LoL and StarCraft II.</p>
+        </div>
+        <div class="foot-col">
+          <h5>Watch</h5>
+          <a href="#streams">Live streams</a><a href="#schedule">Schedule</a><a href="#games">Games</a><a href="#streams">Replays</a>
+        </div>
+        <div class="foot-col">
+          <h5>Community</h5>
+          <a href="#join">Membership</a><a href="partners.html">Partners</a><a href="careers.html">Careers</a><a href="contact.html">Contact</a>
+        </div>
+        <div class="foot-col">
+          <h5>About</h5>
+          <a href="about.html">How it works</a><a href="press.html">Press kit</a><a href="contact.html">Contact</a><a href="status.html">Status</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>© <span id="year">2026</span> ArenaCast. Broadcasts are streamed via Twitch and belong to their respective operators (ESL, PGL, Riot Games).</span>
+        <span>Not affiliated with Twitch or the listed studios.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Register (invite-only) -->
+  <div class="modal-root" id="modal-register">
+    <div class="backdrop"></div>
+    <div class="modal">
+      <button class="close" data-close aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <h3>Redeem invite</h3>
+      <p class="sub">ArenaCast is invite-only. Enter the code you received to create your account.</p>
+      <div class="invite-hint">Demo codes: <code>ESL-2026</code>, <code>MAJOR-VIP</code>, <code>ARENA-PRO</code></div>
+      <form id="form-register" novalidate>
+        <div class="field code"><label>Invite code</label><input name="code" placeholder="XXXX-XXXX" autocomplete="off"></div>
+        <div class="field"><label>Email</label><input name="email" type="email" placeholder="you@example.com" autocomplete="email"></div>
+        <div class="field"><label>Password</label><input name="password" type="password" placeholder="Create a password" autocomplete="new-password"></div>
+        <div class="form-msg"></div>
+        <button class="btn btn-primary btn-block" type="submit">Create account</button>
+      </form>
+      <div class="modal-foot">Already a member? <a href="#" data-switch="modal-login">Sign in</a></div>
+    </div>
+  </div>
+
+  <!-- Login -->
+  <div class="modal-root" id="modal-login">
+    <div class="backdrop"></div>
+    <div class="modal">
+      <button class="close" data-close aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <h3>Sign in</h3>
+      <p class="sub">Welcome back to the arena.</p>
+      <form id="form-login" novalidate>
+        <div class="field"><label>Email</label><input name="email" type="email" placeholder="you@example.com" autocomplete="email"></div>
+        <div class="field"><label>Password</label><input name="password" type="password" placeholder="Your password" autocomplete="current-password"></div>
+        <div class="form-msg"></div>
+        <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+      <div class="modal-foot">Have an invite code? <a href="#" data-switch="modal-register">Create account</a></div>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js?v=1780166433"></script>
+</body>
+</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          

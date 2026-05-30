@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Press kit — ArenaCast</title>
+  <meta name="description" content="ArenaCast press kit — boilerplate, facts and media contact for journalists and partners.">
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=1780166433">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <nav class="nav">
+        <a class="brand" href="index.html"><img class="logo" src="assets/img/logo.svg" alt="ArenaCast">Arena<b>Cast</b></a>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="index.html#streams">Live Streams</a></li>
+          <li><a href="index.html#schedule">Schedule</a></li>
+          <li><a href="index.html#games">Games</a></li>
+          <li><a href="index.html#join">Membership</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a class="btn btn-ghost btn-sm" href="index.html#streams">Watch live</a>
+          <a class="btn btn-primary btn-sm" href="index.html#join">Membership</a>
+          <button class="nav-toggle" id="nav-toggle" aria-label="Menu"><span></span></button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="wrap">
+        <span class="eyebrow">Press kit</span>
+        <h1>Press &amp; <span>media</span></h1>
+        <p>Everything you need to write about ArenaCast. For interviews, quotes or custom assets, <a href="#" data-open="modal-send" style="color:var(--accent);font-weight:700">send us a request</a>.</p>
+      </div>
+    </section>
+
+    <section class="page-section">
+      <div class="wrap">
+        <div class="prose">
+          <h2>Boilerplate</h2>
+          <p>ArenaCast is a 24/7 esports broadcast hub that aggregates the official live and rerun channels of the world's biggest tournament operators into one place, alongside a unified, filterable schedule across Counter-Strike 2, Dota 2, League of Legends and StarCraft II.</p>
+          <h2>Fast <span>facts</span></h2>
+        </div>
+        <div class="info-grid">
+          <div class="info-card"><span class="n">Format</span><h3>Aggregator</h3><p>A viewing layer over official operator channels — we don't produce broadcasts ourselves.</p></div>
+          <div class="info-card"><span class="n">Titles</span><h3>Four games</h3><p>CS2, Dota 2, League of Legends and StarCraft II, with more in rotation over time.</p></div>
+          <div class="info-card"><span class="n">Access</span><h3>Invite-only</h3><p>Membership is currently invite-based; public sign-ups are temporarily closed.</p></div>
+        </div>
+        <div class="prose" style="margin-top:30px">
+          <h2>Logo &amp; <span>brand</span></h2>
+          <p>The ArenaCast wordmark and logo are available on request. Please don't alter the proportions or colours. Game titles, operator names and their logos belong to their respective owners and are referenced for identification only.</p>
+        </div>
+        <div style="margin-top:8px;display:flex;gap:12px;flex-wrap:wrap">
+          <button class="btn btn-primary" data-open="modal-send">Request assets</button>
+          <a class="btn btn-ghost" href="contact.html">Contact</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div class="foot-col foot-brand">
+          <a class="brand" href="index.html"><img class="logo" src="assets/img/logo.svg" alt="ArenaCast">Arena<b>Cast</b></a>
+          <p>A 24/7 esports broadcast hub — live tournaments, reruns and a unified schedule across CS2, Dota 2, LoL and StarCraft II.</p>
+        </div>
+        <div class="foot-col"><h5>Watch</h5><a href="index.html#streams">Live streams</a><a href="index.html#schedule">Schedule</a><a href="index.html#games">Games</a><a href="index.html#streams">Replays</a></div>
+        <div class="foot-col"><h5>Community</h5><a href="index.html#join">Membership</a><a href="partners.html">Partners</a><a href="careers.html">Careers</a><a href="contact.html">Contact</a></div>
+        <div class="foot-col"><h5>About</h5><a href="about.html">How it works</a><a href="press.html">Press kit</a><a href="contact.html">Contact</a><a href="status.html">Status</a></div>
+      </div>
+      <div class="foot-bottom">
+        <span>© <span id="year">2026</span> ArenaCast. Broadcasts are streamed via Twitch and belong to their respective operators (ESL, PGL, Riot Games).</span>
+        <span>Not affiliated with Twitch or the listed studios.</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal-root" id="modal-send">
+    <div class="backdrop"></div>
+    <div class="modal">
+      <button class="close" data-close aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <h3>Press request</h3>
+      <p class="sub">Interviews, quotes or brand assets — tell us what you need.</p>
+      <form class="send-form" novalidate>
+        <div class="field"><label>Your email</label><input name="email" type="email" placeholder="you@outlet.com" autocomplete="email"></div>
+        <div class="field"><label>What you need</label><textarea name="message" placeholder="Outlet, deadline, and what you're after…"></textarea></div>
+        <div class="form-msg"></div>
+        <button class="btn btn-primary btn-block" type="submit">Send</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js?v=1780166433"></script>
+</body>
+</html>

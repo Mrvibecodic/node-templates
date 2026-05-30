@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <rect width="120" height="120" rx="24" fill="#0a0d16"/>
+  <rect x="2" y="2" width="116" height="116" rx="23" fill="none" stroke="#22d3ee" stroke-opacity="0.55" stroke-width="2"/>
+  <text x="60" y="74" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="38" fill="#22d3ee">PGL</text>
+</svg>
