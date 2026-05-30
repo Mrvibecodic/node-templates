@@ -1,0 +1,263 @@
+/* ScreenWire — дайджест ссылок. Стиль: гибрид Steam (тёмный slate) + IMDb (золотой акцент). */
+
+:root {
+  /* Steam-подобный тёмный фон */
+  --bg-top: #1b2838;
+  --bg-bot: #16202d;
+  --bar: #171a21;
+  --bar-line: #000;
+  --panel: #1e2b3a;
+  --panel-2: #24344a;
+  --line: #31435c;
+  --line-soft: #283849;
+
+  /* текст в духе Steam */
+  --text: #c7d5e0;
+  --head: #e8edf2;
+  --muted: #7a8a99;
+  --muted-2: #5b6976;
+
+  /* IMDb-золото как единственный акцент */
+  --gold: #f5c518;
+  --gold-deep: #c9a012;
+  --link: #66c0f4;        /* steam-голубой для ссылок */
+  --link-hover: #a4d7f5;
+
+  --tag-games: #5c7e10;
+  --tag-movies: #b06d12;
+  --tag-series: #2f6f8f;
+
+  --maxw: 760px;
+  --font: Arial, "Helvetica Neue", Helvetica, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--text);
+  background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bot) 320px) fixed, var(--bg-bot);
+  min-height: 100vh;
+}
+
+a { color: var(--link); text-decoration: none; }
+a:hover { color: var(--link-hover); text-decoration: underline; }
+ol, ul { list-style: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+.wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 16px; }
+
+/* ---------- Верхняя панель ---------- */
+.topbar {
+  background: var(--bar);
+  border-bottom: 1px solid var(--bar-line);
+  box-shadow: 0 1px 0 #2a3340;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+.topbar-in {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  height: 50px;
+}
+.brand { display: inline-flex; align-items: center; gap: 9px; color: var(--head); }
+.brand:hover { text-decoration: none; }
+.brand-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 28px; height: 28px;
+  background: var(--gold);
+  color: #1b2838;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: -0.5px;
+  border-radius: 3px;
+}
+.brand-name { font-weight: 700; font-size: 17px; color: var(--head); }
+
+.tabs { display: flex; gap: 2px; margin-left: 6px; flex: 1; }
+.tab {
+  padding: 6px 12px;
+  font-size: 14px;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  transition: color .12s;
+}
+.tab:hover { color: var(--head); }
+.tab.is-active { color: var(--head); border-bottom-color: var(--gold); font-weight: 700; }
+
+.topbar-right { margin-left: auto; }
+.ghost-btn {
+  font-size: 13px;
+  color: var(--muted);
+  padding: 5px 11px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--panel);
+}
+.ghost-btn:hover { color: var(--head); border-color: var(--gold-deep); }
+.ghost-btn:active { transform: translateY(1px); }
+
+/* ---------- Заголовок ленты ---------- */
+.feed-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 22px 0 12px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.feed-head h1 { font-size: 20px; color: var(--head); font-weight: 700; }
+.feed-sub { font-size: 13px; color: var(--muted); }
+
+/* ---------- Лента (HN-плотность) ---------- */
+.feed { padding: 6px 0; counter-reset: rank; }
+
+.row {
+  display: grid;
+  grid-template-columns: 26px 104px 1fr;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line-soft);
+  align-items: start;
+}
+.row:hover { background: rgba(102,192,244,.04); }
+
+/* миниатюра релиза */
+.thumb {
+  display: block;
+  width: 104px;
+  height: 58px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--panel-2);
+  border: 1px solid var(--line-soft);
+}
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.thumb.ph {
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 20px;
+  color: #e9eef2;
+  text-decoration: none;
+}
+.thumb.ph.games { background: linear-gradient(135deg, #3a5410, var(--tag-games)); }
+.thumb.ph.movies { background: linear-gradient(135deg, #7a4a0c, var(--tag-movies)); }
+.thumb.ph.series { background: linear-gradient(135deg, #1f4a60, var(--tag-series)); }
+
+.row .rank {
+  text-align: right;
+  color: var(--muted-2);
+  font-size: 14px;
+  padding-top: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.row .main { min-width: 0; }
+
+.row .title-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 7px; }
+.row .title {
+  color: var(--head);
+  font-size: 15.5px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.row a.title:hover { color: var(--gold); text-decoration: none; }
+.row .src {
+  font-size: 12px;
+  color: var(--muted-2);
+}
+
+.row .meta {
+  margin-top: 3px;
+  font-size: 12.5px;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.row .meta .sep { color: var(--muted-2); }
+.row .meta b { color: var(--text); font-weight: 700; }
+.row .meta .score { color: var(--gold); font-weight: 700; }
+
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 3px 7px;
+  border-radius: 3px;
+  color: #e9eef2;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+}
+.tag.games { background: var(--tag-games); }
+.tag.movies { background: var(--tag-movies); }
+.tag.series { background: var(--tag-series); }
+
+/* скелетоны загрузки */
+.row-skeleton { grid-template-columns: 1fr; }
+.sk {
+  display: block;
+  height: 14px;
+  width: 70%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--panel) 25%, var(--panel-2) 37%, var(--panel) 63%);
+  background-size: 400% 100%;
+  animation: sk 1.3s ease-in-out infinite;
+}
+.row-skeleton:nth-child(2) .sk { width: 82%; }
+.row-skeleton:nth-child(3) .sk { width: 60%; }
+.row-skeleton:nth-child(4) .sk { width: 75%; }
+@keyframes sk { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+
+.feed-empty {
+  padding: 40px 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ---------- Подвал ленты ---------- */
+.feed-foot { padding: 18px 0 40px; text-align: center; }
+.more-btn {
+  font-size: 14px;
+  color: var(--head);
+  padding: 9px 20px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--panel);
+}
+.more-btn:hover { border-color: var(--gold-deep); color: var(--gold); }
+.more-btn[hidden] { display: none; }
+
+/* ---------- Подвал сайта ---------- */
+.site-foot {
+  border-top: 1px solid var(--line-soft);
+  background: var(--bar);
+  padding: 18px 0 30px;
+}
+.foot-cols { display: flex; flex-wrap: wrap; gap: 12px; font-size: 13px; margin-bottom: 8px; }
+.foot-cols .dot { color: var(--muted-2); }
+.foot-cols a { color: var(--muted); }
+.foot-cols a:hover { color: var(--gold); }
+.foot-note { font-size: 12px; color: var(--muted-2); line-height: 1.5; }
+
+/* ---------- Адаптив ---------- */
+@media (max-width: 560px) {
+  .brand-name { display: none; }
+  .topbar-in { gap: 8px; }
+  .tab { padding: 6px 8px; font-size: 13px; }
+  .ghost-btn { padding: 5px 8px; }
+  .row { grid-template-columns: 20px 84px 1fr; gap: 9px; }
+  .thumb { width: 84px; height: 48px; }
+  .thumb.ph { font-size: 16px; }
+}
