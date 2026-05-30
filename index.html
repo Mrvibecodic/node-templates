@@ -1,26 +1,128 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>node-templates — ArenaCast Esports Stream Template</title>
-  <meta name="description" content="Static, deploy-ready website templates. Live demo: ArenaCast — a 24/7 esports broadcast landing page.">
+  <title>node-templates — витрина шаблонов</title>
+  <meta name="description" content="Коллекция статических, готовых к деплою шаблонов сайтов на чистом HTML/CSS/JS. Живые демо и исходники.">
   <!-- OG / link preview -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="node-templates">
-  <meta property="og:title" content="node-templates — ArenaCast Esports Stream Template">
-  <meta property="og:description" content="Static, deploy-ready website templates. Live demo of ArenaCast — a 24/7 esports broadcast landing page.">
+  <meta property="og:title" content="node-templates — витрина шаблонов">
+  <meta property="og:description" content="Коллекция статических, готовых к деплою шаблонов сайтов на чистом HTML/CSS/JS. Живые демо и исходники.">
   <meta property="og:url" content="https://mrvibecodic.github.io/node-templates/">
   <meta property="og:image" content="https://mrvibecodic.github.io/node-templates/previews/og-image.png">
   <meta property="og:image:width" content="1280">
   <meta property="og:image:height" content="640">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://mrvibecodic.github.io/node-templates/previews/og-image.png">
-  <link rel="canonical" href="https://mrvibecodic.github.io/node-templates/esports-stream-template/">
-  <meta http-equiv="refresh" content="0; url=./esports-stream-template/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0e13; --surface:#141925; --surface-2:#1b2230; --line:#28303f;
+      --text:#e8edf4; --muted:#9aa3b5; --accent:#0bc6e3; --brand:#7c5cff; --live:#ff3b5c;
+      --maxw:1140px; --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:radial-gradient(1200px 600px at 80% -10%,rgba(124,92,255,.18),transparent 60%),radial-gradient(900px 500px at 0% 0%,rgba(11,198,227,.12),transparent 55%),var(--bg);
+      color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,sans-serif;line-height:1.55}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+    header.hero{padding:72px 0 40px;text-align:center}
+    .eyebrow{display:inline-block;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);
+      border:1px solid var(--line);border-radius:999px;padding:6px 14px;margin-bottom:20px;background:rgba(255,255,255,.02)}
+    h1{font-family:Rajdhani,sans-serif;font-weight:700;font-size:clamp(34px,6vw,60px);line-height:1.04;margin:0 0 16px;
+      letter-spacing:.5px}
+    h1 span{background:linear-gradient(90deg,var(--accent),var(--brand));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .sub{max-width:680px;margin:0 auto;color:var(--muted);font-size:18px}
+    .meta{margin-top:22px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .chip{font-size:13px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:6px 12px;background:var(--surface)}
+    .notice{max-width:var(--maxw);margin:14px auto 0;padding:0 22px}
+    .notice .inner{display:flex;gap:12px;align-items:flex-start;background:rgba(255,59,92,.08);border:1px solid rgba(255,59,92,.3);
+      border-radius:12px;padding:12px 16px;color:#ffd7de;font-size:14px}
+    .notice b{color:#fff}
+    section.grid-sec{padding:34px 0 80px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:22px}
+    .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+      display:flex;flex-direction:column;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+    .card:hover{transform:translateY(-4px);border-color:rgba(11,198,227,.5);box-shadow:0 18px 40px -20px rgba(0,0,0,.8)}
+    .thumb{position:relative;aspect-ratio:16/10;background-size:cover;background-position:top center}
+    .thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,14,19,0) 30%,rgba(11,14,19,.92) 100%)}
+    .panel{position:absolute;left:14px;right:14px;bottom:14px;z-index:1;background:rgba(11,14,19,.66);
+      backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.08);
+      border-radius:12px;padding:12px 14px}
+    .tag{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+    .panel h3{font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;margin:4px 0 6px;letter-spacing:.4px}
+    .panel p{margin:0;font-size:13.5px;color:#cfd6e4}
+    .actions{display:flex;gap:10px;padding:14px}
+    .btn{flex:1;text-align:center;font-size:14px;font-weight:600;padding:10px 12px;border-radius:10px;border:1px solid var(--line);
+      transition:background .15s,border-color .15s}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),var(--brand));color:#0b0e13;border:none}
+    .btn-primary:hover{filter:brightness(1.08)}
+    .btn-ghost:hover{background:var(--surface-2);border-color:var(--accent)}
+    footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:var(--muted);font-size:14px}
+    footer a{color:var(--accent)}
+  </style>
 </head>
-<body style="background:#0b0e13;color:#e8edf4;font-family:system-ui,Segoe UI,Roboto,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;margin:0">
-  <p style="text-align:center">Открываю демо ArenaCast…<br>
-  <a href="./esports-stream-template/" style="color:#0bc6e3">node-templates/esports-stream-template</a></p>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <span class="eyebrow">node-templates</span>
+      <h1>Витрина <span>шаблонов</span></h1>
+      <p class="sub">Коллекция статических, готовых к деплою сайтов на чистом <b>HTML&nbsp;+&nbsp;CSS&nbsp;+&nbsp;JS</b> — без сборки и зависимостей. Живое демо и исходники для каждого шаблона.</p>
+      <div class="meta">
+        <span class="chip">Без сборки</span>
+        <span class="chip">Без зависимостей</span>
+        <span class="chip">Netlify · Vercel · GitHub Pages · S3</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="notice"><div class="inner">
+    <span>⚠</span>
+    <div><b>Про превью на GitHub Pages.</b> Некоторые встраиваемые блоки (например, Twitch-плееры) на GitHub&nbsp;Pages могут не отображаться — это ограничение демо-хостинга, в реальном деплое они работают.</div>
+  </div></div>
+
+  <section class="grid-sec">
+    <div class="wrap">
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <footer class="wrap">
+    Исходники: <a href="https://github.com/Mrvibecodic/node-templates">github.com/Mrvibecodic/node-templates</a> · вдохновлено <a href="https://github.com/SmallPoppa">SmallPoppa</a>
+  </footer>
+
+  <script>
+    // Список шаблонов. Добавить новый = добавить объект сюда.
+    const REPO = "https://github.com/Mrvibecodic/node-templates/tree/main";
+    const TEMPLATES = [
+      {
+        name: "ArenaCast",
+        tag: "Esports · Streaming",
+        img: "previews/esports-stream-template.png",
+        desc: "Лендинг круглосуточной киберспортивной трансляции: вкладки живых стримов по играм, расписание турниров, флоу закрытого членства и внутренние страницы.",
+        demo: "esports-stream-template/",
+        code: REPO + "/esports-stream-template"
+      }
+    ];
+    const grid = document.getElementById("grid");
+    grid.innerHTML = TEMPLATES.map(t => `
+      <article class="card">
+        <div class="thumb" style="background-image:url('${t.img}')">
+          <div class="panel">
+            <div class="tag">${t.tag}</div>
+            <h3>${t.name}</h3>
+            <p>${t.desc}</p>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="btn btn-primary" href="${t.demo}">Демо</a>
+          <a class="btn btn-ghost" href="${t.code}">Репозиторий</a>
+        </div>
+      </article>`).join("");
+  </script>
 </body>
 </html>
