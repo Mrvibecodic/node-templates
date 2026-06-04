@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLAYZA — флеш-игры в браузере</title>
+<meta name="description" content="PLAYZA — каталог флеш-игр в браузере. Аркады, гонки, файтинги, хорроры и сотни других прямо на одной странице.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Unbounded:wght@600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="site-config.js"></script>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="topbar" id="top">
+  <a class="brand" href="#top">
+    <span class="brand-mark" data-site-mark>▚</span>
+    <span class="brand-name" data-site-name>PLAYZA</span>
+  </a>
+  <nav class="nav">
+    <a href="#hot">В тренде</a>
+    <a href="#fresh">Свежее</a>
+    <a href="#catalog">Каталог</a>
+    <a href="#top-rated">Топ оценок</a>
+  </nav>
+  <button class="btn btn-login" data-open-login>Войти</button>
+  <button class="burger" aria-label="Меню" data-burger><span></span><span></span><span></span></button>
+</header>
+
+<section class="hero">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <span class="kicker">браузерная аркадная</span>
+      <h1>Жми <em>Играть</em>.<br>Залипай до утра.</h1>
+      <p class="lead">Сотни флеш-игр на одной странице — без установок, без ожиданий. Хватай рекорд и не отпускай.</p>
+      <div class="hero-actions">
+        <a href="#catalog" class="btn btn-primary">Открыть каталог</a>
+        <button class="btn btn-ghost" data-open-login>Получить доступ</button>
+      </div>
+      <div class="hero-stats">
+        <div><b data-stat="games">0</b><span>игр</span></div>
+        <div><b data-stat="cats">0</b><span>категорий</span></div>
+        <div><b data-stat="plays">0</b><span>запусков</span></div>
+      </div>
+    </div>
+    <div class="hero-deck" id="heroDeck" aria-hidden="true"></div>
+  </div>
+</section>
+
+<section class="rail-section" id="hot">
+  <div class="section-head">
+    <h2>В тренде <span class="flame">🔥</span></h2>
+    <p>Что рубят прямо сейчас</p>
+  </div>
+  <div class="rail" id="railHot"></div>
+</section>
+
+<section class="rail-section" id="fresh">
+  <div class="section-head">
+    <h2>Свежее</h2>
+    <p>Только заехали в каталог</p>
+  </div>
+  <div class="rail" id="railFresh"></div>
+</section>
+
+<section class="catalog" id="catalog">
+  <div class="section-head">
+    <h2>Весь каталог</h2>
+    <p>Фильтруй по жанру и стилю, ищи по названию</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="search">
+      <span class="search-ic">⌕</span>
+      <input type="search" id="search" placeholder="Поиск игры…" autocomplete="off">
+    </div>
+    <div class="sort">
+      <label for="sort">Сортировка</label>
+      <select id="sort">
+        <option value="popular">По популярности</option>
+        <option value="rating">По оценке</option>
+        <option value="az">А — Я</option>
+        <option value="new">Сначала новые</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="chips" id="catChips"></div>
+  <div class="chips chips-tags" id="tagChips"></div>
+
+  <div class="result-meta"><span id="resultCount">0</span> игр</div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" hidden>Ничего не нашлось. Попробуй другой запрос или сбрось фильтры.</div>
+  <div class="more-wrap"><button class="btn btn-ghost" id="loadMore">Показать ещё</button></div>
+</section>
+
+<section class="rail-section" id="top-rated">
+  <div class="section-head">
+    <h2>Топ по оценкам</h2>
+    <p>Лучшее по мнению игроков</p>
+  </div>
+  <div class="rail" id="railTop"></div>
+</section>
+
+<section class="band">
+  <div class="band-inner">
+    <h2>Доступ — по приглашениям</h2>
+    <p>Каталог открыт для всех. Чтобы запускать игры, нужен инвайт от того, кто уже внутри.</p>
+    <button class="btn btn-primary" data-open-login>У меня есть приглашение</button>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="foot-col">
+    <a class="brand" href="#top"><span class="brand-mark" data-site-mark>▚</span><span class="brand-name" data-site-name>PLAYZA</span></a>
+    <p class="foot-note">Флеш-аркада в браузере. Собрано для тех, кто скучает по тому самому ощущению.</p>
+  </div>
+  <div class="foot-col">
+    <h4>Каталог</h4>
+    <a href="#hot">В тренде</a>
+    <a href="#fresh">Свежее</a>
+    <a href="#catalog">Все игры</a>
+    <a href="#top-rated">Топ оценок</a>
+  </div>
+  <div class="foot-col">
+    <h4>Жанры</h4>
+    <div class="foot-cats" id="footCats"></div>
+  </div>
+  <div class="foot-col">
+    <h4>Доступ</h4>
+    <a href="#" data-open-login>Войти по инвайту</a>
+    <a href="#" data-open-login>Запросить приглашение</a>
+    <span class="foot-mini"><span data-site-name>PLAYZA</span> · аркада не спит</span>
+  </div>
+</footer>
+
+<div class="modal" id="gameModal" hidden>
+  <div class="modal-back" data-close></div>
+  <div class="modal-card game-card-modal" role="dialog" aria-modal="true">
+    <button class="modal-x" data-close aria-label="Закрыть">×</button>
+    <div class="gm-body" id="gmBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="loginModal" hidden>
+  <div class="modal-back" data-close></div>
+  <div class="modal-card login-card" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <button class="modal-x" data-close aria-label="Закрыть">×</button>
+    <div class="lock-badge">🔒</div>
+    <h3 id="loginTitle">Вход по приглашению</h3>
+    <p class="login-sub">Регистрация закрыта. Запустить игры можно только с инвайт-кодом от участника.</p>
+    <form class="login-form" id="loginForm" autocomplete="off">
+      <label>Инвайт-код
+        <input type="text" placeholder="XXXX-XXXX-XXXX" disabled>
+      </label>
+      <label>Никнейм
+        <input type="text" placeholder="твой ник" disabled>
+      </label>
+      <label>Пароль
+        <input type="password" placeholder="••••••••" disabled>
+      </label>
+      <button type="button" class="btn btn-primary btn-block" disabled>Доступ закрыт</button>
+    </form>
+    <p class="login-foot">Нет приглашения? Лови инвайт у того, кто уже играет.</p>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="assets/js/catalog.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
