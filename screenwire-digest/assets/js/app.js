@@ -1,18 +1,13 @@
-/* ScreenWire — клиентский агрегатор ссылок.
-   Три keyless-источника с открытым CORS:
-     • Игры    — CheapShark (свежие скидки/релизы в Steam и других магазинах)
-     • Фильмы  — Apple Marketing RSS (топ фильмов iTunes)
-     • Сериалы — TVMaze (эпизоды в эфире сегодня)
-   Ключи не нужны. При сбое сети показываются резервные данные, чтобы лента не пустовала. */
-
 (function () {
   "use strict";
 
-  var PAGE = 15;            // сколько строк показывать за раз
+  var SITE_TITLE = "ScreenWire";
+
+  var PAGE = 15;
   var state = {
     feed: "all",
     shown: PAGE,
-    cache: {}              // kind -> массив нормализованных элементов
+    cache: {}
   };
 
   var elFeed = document.getElementById("feed");
@@ -23,7 +18,6 @@
 
   var LABEL = { all: "Свежее", games: "Игры", movies: "Фильмы", series: "Сериалы" };
 
-  /* ---------- утилиты ---------- */
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
@@ -33,6 +27,10 @@
     var d = new Date();
     return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
   }
+
+  function httpsify(u) {
+    return String(u || "").replace(/^http:\/\//i, "https://");
+  }
   function fetchJSON(url) {
     var ctl = new AbortController();
     var t = setTimeout(function () { ctl.abort(); }, 9000);
@@ -41,8 +39,6 @@
       .finally(function () { clearTimeout(t); });
   }
 
-  /* ---------- нормализация источников ---------- */
-  // CheapShark -> игры
   function mapGames(arr) {
     var STORES = { "1": "Steam", "7": "GOG", "8": "Origin", "11": "Humble", "13": "Uplay", "25": "Epic", "23": "GamersGate" };
     return (arr || []).map(function (d) {
@@ -56,24 +52,36 @@
         title: d.title,
         url: "https://www.cheapshark.com/redirect?dealID=" + encodeURIComponent(d.dealID),
         source: STORES[d.storeID] || "магазин",
-        img: d.thumb || "",
+        img: httpsify(d.thumb),
+
+        imgAlt: d.steamAppID ? "https://cdn.cloudflare.steamstatic.com/steam/apps/" + d.steamAppID + "/header.jpg" : "",
         meta: meta
       };
     });
   }
-  // Apple RSS -> фильмы
+
   function mapMovies(json) {
-    var res = (json && json.feed && json.feed.results) || [];
+    var res = (json && json.titles) || [];
     return res.map(function (m) {
+      var full = (m.primaryImage && m.primaryImage.url) || "";
+      var thumb = full ? full.replace(/\._V1_.*?\.jpg$/, "._V1_QL75_UX240_.jpg") : "";
+      var rating = m.rating && m.rating.aggregateRating;
       var meta = [];
-      if (m.genres && m.genres[0]) meta.push(esc(m.genres[0].name));
-      if (m.releaseDate) meta.push((m.releaseDate + "").slice(0, 4));
-      if (m.artistName) meta.push("реж. " + esc(m.artistName));
-      var art = m.artworkUrl100 ? m.artworkUrl100.replace(/100x100/, "200x200") : "";
-      return { kind: "movies", title: m.name, url: m.url, source: "iTunes", img: art, meta: meta };
+      if (rating) meta.push('<span class="score">★ ' + rating + "</span>");
+      if (m.genres && m.genres[0]) meta.push(esc(m.genres[0]));
+      if (m.startYear) meta.push(String(m.startYear));
+      return {
+        kind: "movies",
+        title: m.primaryTitle || m.originalTitle,
+        url: "https://www.imdb.com/title/" + encodeURIComponent(m.id) + "/",
+        source: "IMDb",
+        img: httpsify(thumb),
+        imgAlt: httpsify(full),
+        meta: meta
+      };
     });
   }
-  // TVMaze -> сериалы (поддержка /schedule -> e.show и /schedule/web -> e._embedded.show)
+
   var SKIP_TYPE = { "News": 1, "Talk Show": 1, "Variety": 1, "Sports": 1, "Game Show": 1, "Panel Show": 1, "Award Show": 1 };
   function mapSeries(arr) {
     return (arr || []).map(function (e) {
@@ -86,12 +94,13 @@
       if (e.season && e.number) meta.push("S" + e.season + "·E" + e.number);
       if (e.airtime) meta.push(esc(e.airtime));
       var title = show.name + (e.name ? " — " + e.name : "");
-      var img = show.image && (show.image.medium || show.image.original) || "";
-      return { kind: "series", title: title, url: e.url || show.url, source: net || "TVMaze", img: img, meta: meta };
+
+      var img = (show.image && (show.image.medium || show.image.original)) ||
+                (e.image && (e.image.medium || e.image.original)) || "";
+      return { kind: "series", title: title, url: e.url || show.url, source: net || "TVMaze", img: httpsify(img), meta: meta };
     });
   }
 
-  /* ---------- резервные данные (фолбэк при сбое сети) ---------- */
   var DEMO = {
     games: [
       { kind: "games", title: "Baldur's Gate 3", url: "#", source: "Steam", meta: ['<span class="score">$35.99</span>', "<b>−40%</b> от $59.99", "Overwhelmingly Positive"] },
@@ -99,9 +108,9 @@
       { kind: "games", title: "Elden Ring", url: "#", source: "Steam", meta: ['<span class="score">$41.99</span>', "<b>−30%</b> от $59.99", "Very Positive"] }
     ],
     movies: [
-      { kind: "movies", title: "Dune: Part Two", url: "#", source: "iTunes", meta: ["Sci-Fi", "2024", "реж. Denis Villeneuve"] },
-      { kind: "movies", title: "Oppenheimer", url: "#", source: "iTunes", meta: ["Drama", "2023", "реж. Christopher Nolan"] },
-      { kind: "movies", title: "Poor Things", url: "#", source: "iTunes", meta: ["Comedy", "2023", "реж. Yorgos Lanthimos"] }
+      { kind: "movies", title: "Dune: Part Two", url: "#", source: "IMDb", meta: ['<span class="score">★ 8.5</span>', "Sci-Fi", "2024"] },
+      { kind: "movies", title: "Oppenheimer", url: "#", source: "IMDb", meta: ['<span class="score">★ 8.3</span>', "Drama", "2023"] },
+      { kind: "movies", title: "Poor Things", url: "#", source: "IMDb", meta: ['<span class="score">★ 7.8</span>', "Comedy", "2023"] }
     ],
     series: [
       { kind: "series", title: "Severance — Cold Harbor", url: "#", source: "TVMaze", meta: ["Apple TV+", "S2·E10", "21:00"] },
@@ -110,14 +119,13 @@
     ]
   };
 
-  /* ---------- загрузка одного раздела ---------- */
   function loadKind(kind) {
     if (state.cache[kind]) return Promise.resolve(state.cache[kind]);
     var p;
     if (kind === "games") {
       p = fetchJSON("https://www.cheapshark.com/api/1.0/deals?sortBy=Recent&pageSize=40&onSale=1").then(mapGames);
     } else if (kind === "movies") {
-      p = fetchJSON("https://rss.applemarketingtools.com/api/v2/us/movies/top-movies/25/movies.json").then(mapMovies);
+      p = fetchJSON("https://api.imdbapi.dev/titles?types=MOVIE&startYear=" + (new Date().getFullYear()) + "&sortBy=SORT_BY_USER_RATING_COUNT&sortOrder=DESC&pageSize=50").then(mapMovies);
     } else {
       p = fetchJSON("https://api.tvmaze.com/schedule?country=US&date=" + today()).then(mapSeries);
     }
@@ -132,15 +140,17 @@
     });
   }
 
-  /* ---------- рендер ---------- */
   function rowHTML(item, rank) {
     var tagName = { games: "Игры", movies: "Фильмы", series: "Сериалы" }[item.kind];
     var initial = { games: "G", movies: "M", series: "S" }[item.kind];
     var meta = item.meta && item.meta.length ? item.meta.join('<span class="sep">·</span>') : "";
+
     var thumb = item.img
       ? '<a class="thumb" href="' + esc(item.url) + '" target="_blank" rel="noopener">' +
-          '<img loading="lazy" src="' + esc(item.img) + '" alt="" ' +
-          'onerror="this.parentNode.classList.add(\'ph\',\'' + item.kind + '\');this.parentNode.textContent=\'' + initial + '\'"></a>'
+          '<img loading="lazy" referrerpolicy="no-referrer" src="' + esc(item.img) + '" alt=""' +
+          (item.imgAlt && item.imgAlt !== item.img ? ' data-alt="' + esc(item.imgAlt) + '"' : '') +
+          ' onerror="if(this.dataset.alt){this.src=this.dataset.alt;this.removeAttribute(\'data-alt\');}' +
+          'else{this.parentNode.classList.add(\'ph\',\'' + item.kind + '\');this.parentNode.textContent=\'' + initial + '\';}"></a>'
       : '<span class="thumb ph ' + item.kind + '">' + initial + '</span>';
     return '' +
       '<li class="row">' +
@@ -197,7 +207,6 @@
     }
   }
 
-  /* ---------- события ---------- */
   function setFeed(feed) {
     state.feed = feed;
     state.shown = PAGE;
@@ -223,6 +232,15 @@
     setFeed(state.feed);
   });
 
-  /* старт */
+  (function applyTitle() {
+    var caps = SITE_TITLE.match(/[A-ZА-ЯЁ0-9]/g) || [];
+    var mark = (caps.length >= 2 ? caps.slice(0, 2).join("") : SITE_TITLE.slice(0, 2)).toUpperCase();
+    var elName = document.querySelector(".brand-name");
+    var elMark = document.querySelector(".brand-mark");
+    if (elName) elName.textContent = SITE_TITLE;
+    if (elMark) elMark.textContent = mark;
+    document.title = document.title.replace(/^[^—|]+/, SITE_TITLE + " ");
+  })();
+
   setFeed("all");
 })();

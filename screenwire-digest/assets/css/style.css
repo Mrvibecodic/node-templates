@@ -1,7 +1,5 @@
-/* ScreenWire — дайджест ссылок. Стиль: гибрид Steam (тёмный slate) + IMDb (золотой акцент). */
-
 :root {
-  /* Steam-подобный тёмный фон */
+
   --bg-top: #1b2838;
   --bg-bot: #16202d;
   --bar: #171a21;
@@ -11,16 +9,14 @@
   --line: #31435c;
   --line-soft: #283849;
 
-  /* текст в духе Steam */
   --text: #c7d5e0;
   --head: #e8edf2;
   --muted: #7a8a99;
   --muted-2: #5b6976;
 
-  /* IMDb-золото как единственный акцент */
   --gold: #f5c518;
   --gold-deep: #c9a012;
-  --link: #66c0f4;        /* steam-голубой для ссылок */
+  --link: #66c0f4;
   --link-hover: #a4d7f5;
 
   --tag-games: #5c7e10;
@@ -51,7 +47,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 .wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 16px; }
 
-/* ---------- Верхняя панель ---------- */
 .topbar {
   background: var(--bar);
   border-bottom: 1px solid var(--bar-line);
@@ -66,7 +61,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   gap: 18px;
   height: 50px;
 }
-.brand { display: inline-flex; align-items: center; gap: 9px; color: var(--head); }
+.brand { display: inline-flex; align-items: center; gap: 9px; color: var(--head); flex-shrink: 0; }
 .brand:hover { text-decoration: none; }
 .brand-mark {
   display: inline-grid;
@@ -81,7 +76,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .brand-name { font-weight: 700; font-size: 17px; color: var(--head); }
 
-.tabs { display: flex; gap: 2px; margin-left: 6px; flex: 1; }
+.tabs { display: flex; gap: 2px; margin-left: 6px; flex: 1; min-width: 0; }
 .tab {
   padding: 6px 12px;
   font-size: 14px;
@@ -93,7 +88,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .tab:hover { color: var(--head); }
 .tab.is-active { color: var(--head); border-bottom-color: var(--gold); font-weight: 700; }
 
-.topbar-right { margin-left: auto; }
+.topbar-right { margin-left: auto; flex-shrink: 0; }
 .ghost-btn {
   font-size: 13px;
   color: var(--muted);
@@ -105,7 +100,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .ghost-btn:hover { color: var(--head); border-color: var(--gold-deep); }
 .ghost-btn:active { transform: translateY(1px); }
 
-/* ---------- Заголовок ленты ---------- */
 .feed-head {
   display: flex;
   align-items: baseline;
@@ -116,7 +110,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .feed-head h1 { font-size: 20px; color: var(--head); font-weight: 700; }
 .feed-sub { font-size: 13px; color: var(--muted); }
 
-/* ---------- Лента (HN-плотность) ---------- */
 .feed { padding: 6px 0; counter-reset: rank; }
 
 .row {
@@ -129,7 +122,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .row:hover { background: rgba(102,192,244,.04); }
 
-/* миниатюра релиза */
 .thumb {
   display: block;
   width: 104px;
@@ -140,6 +132,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   border: 1px solid var(--line-soft);
 }
 .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+img { max-width: 100%; }
 .thumb.ph {
   display: grid;
   place-items: center;
@@ -203,7 +196,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .tag.movies { background: var(--tag-movies); }
 .tag.series { background: var(--tag-series); }
 
-/* скелетоны загрузки */
 .row-skeleton { grid-template-columns: 1fr; }
 .sk {
   display: block;
@@ -226,7 +218,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   font-size: 14px;
 }
 
-/* ---------- Подвал ленты ---------- */
 .feed-foot { padding: 18px 0 40px; text-align: center; }
 .more-btn {
   font-size: 14px;
@@ -239,7 +230,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .more-btn:hover { border-color: var(--gold-deep); color: var(--gold); }
 .more-btn[hidden] { display: none; }
 
-/* ---------- Подвал сайта ---------- */
 .site-foot {
   border-top: 1px solid var(--line-soft);
   background: var(--bar);
@@ -251,13 +241,39 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .foot-cols a:hover { color: var(--gold); }
 .foot-note { font-size: 12px; color: var(--muted-2); line-height: 1.5; }
 
-/* ---------- Адаптив ---------- */
-@media (max-width: 560px) {
+@media (max-width: 760px) {
+  .feed-head { padding: 18px 0 10px; }
+}
+
+@media (max-width: 600px) {
+  .wrap { padding: 0 12px; }
   .brand-name { display: none; }
-  .topbar-in { gap: 8px; }
-  .tab { padding: 6px 8px; font-size: 13px; }
-  .ghost-btn { padding: 5px 8px; }
-  .row { grid-template-columns: 20px 84px 1fr; gap: 9px; }
+  .topbar-in { gap: 8px; height: 48px; }
+  .tabs {
+    margin-left: 2px;
+    gap: 0;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { padding: 6px 9px; font-size: 13px; white-space: nowrap; }
+  .ghost-btn { padding: 5px 9px; font-size: 12px; }
+  .feed-head h1 { font-size: 18px; }
+  .row { grid-template-columns: 20px 84px 1fr; gap: 10px; }
+  .row .title { font-size: 14.5px; }
   .thumb { width: 84px; height: 48px; }
   .thumb.ph { font-size: 16px; }
+}
+
+@media (max-width: 400px) {
+  .wrap { padding: 0 10px; }
+  .row { grid-template-columns: 72px 1fr; gap: 10px; }
+  .row .rank { display: none; }
+  .thumb { width: 72px; height: 42px; }
+  .feed-head { flex-direction: column; align-items: flex-start; gap: 2px; }
+}
+
+@media (hover: none) {
+  .row:hover { background: none; }
 }
