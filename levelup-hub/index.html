@@ -1,0 +1,1337 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Игровой портал с каталогом, рейтингами, скидками и подборками игр">
+  <title>LevelUp Hub — игры, рейтинги и скидки</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050711;
+      --surface: rgba(11, 16, 31, 0.82);
+      --surface-strong: rgba(17, 24, 45, 0.96);
+      --card: rgba(21, 29, 53, 0.78);
+      --text: #f8fbff;
+      --muted: #b1bcd6;
+      --soft: #dbe7ff;
+      --accent: #8b5cf6;
+      --accent-2: #06b6d4;
+      --accent-3: #f97316;
+      --success: #34d399;
+      --warning: #facc15;
+      --line: rgba(255, 255, 255, 0.11);
+      --shadow: 0 28px 90px rgba(0, 0, 0, 0.38);
+      --radius-lg: 30px;
+      --radius-md: 22px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at 8% 8%, rgba(139, 92, 246, 0.32), transparent 27rem),
+        radial-gradient(circle at 88% 12%, rgba(6, 182, 212, 0.2), transparent 24rem),
+        radial-gradient(circle at 50% 92%, rgba(249, 115, 22, 0.14), transparent 28rem),
+        linear-gradient(135deg, #050711 0%, #0d1428 45%, #050711 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.36;
+      background-image: linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+      background-size: 52px 52px;
+      mask-image: linear-gradient(to bottom, black, transparent 78%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .page {
+      position: relative;
+      width: min(1220px, calc(100% - clamp(24px, 5vw, 48px)));
+      margin: 0 auto;
+      padding: clamp(14px, 3vw, 24px) 0 44px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 13px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: rgba(5, 7, 17, 0.68);
+      backdrop-filter: blur(18px);
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.28);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: max-content;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      color: #06101f;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 14px 34px rgba(139, 92, 246, 0.38);
+      font-weight: 950;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.94rem;
+      white-space: nowrap;
+    }
+
+    .nav a {
+      padding: 10px 12px;
+      border-radius: 999px;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+
+    .nav a:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: min(260px, 26vw);
+      min-width: 220px;
+      padding: 10px 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.055);
+      color: var(--muted);
+    }
+
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+    }
+
+    .search input::placeholder {
+      color: var(--muted);
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #04101f;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 18px 42px rgba(139, 92, 246, 0.3);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .ghost-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 11px 16px;
+      color: var(--soft);
+      background: rgba(255, 255, 255, 0.055);
+      font-weight: 800;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .button:hover,
+    .ghost-button:hover {
+      transform: translateY(-2px);
+    }
+
+    .button:focus-visible,
+    .ghost-button:focus-visible,
+    .filter-btn:focus-visible,
+    .select:focus-visible,
+    .search input:focus-visible,
+    .nav a:focus-visible {
+      outline: 3px solid rgba(6, 182, 212, 0.55);
+      outline-offset: 3px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(300px, 0.88fr);
+      gap: clamp(16px, 2.5vw, 24px);
+      padding: clamp(32px, 5vw, 52px) 0 20px;
+      align-items: stretch;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-main {
+      min-height: clamp(430px, 52vw, 560px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      padding: clamp(28px, 5vw, 52px);
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.28), rgba(6, 182, 212, 0.09)), var(--surface);
+    }
+
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      inset: auto -18% -38% 32%;
+      height: 360px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.26), transparent 68%);
+      filter: blur(8px);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 760px;
+    }
+
+    .eyebrow {
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid rgba(6, 182, 212, 0.24);
+      border-radius: 999px;
+      color: #8defff;
+      background: rgba(6, 182, 212, 0.09);
+      font-size: 0.82rem;
+      font-weight: 850;
+      letter-spacing: 0.02em;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      margin-top: 20px;
+      font-size: clamp(2.5rem, 5.4vw, 4.6rem);
+      line-height: 0.98;
+      letter-spacing: -0.045em;
+      overflow-wrap: break-word;
+    }
+
+    .lead {
+      max-width: 670px;
+      margin-top: 22px;
+      color: var(--soft);
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      line-height: 1.72;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .hero-side {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      gap: clamp(14px, 2vw, 16px);
+    }
+
+    .spotlight {
+      overflow: hidden;
+      border-radius: var(--radius-lg);
+      background: var(--surface-strong);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .spotlight img {
+      flex: none;
+      height: clamp(188px, 24vw, 224px);
+      object-fit: cover;
+      background: #111827;
+    }
+
+    .spotlight-body,
+    .card-body,
+    .compact-body {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+    }
+
+    .spotlight-body {
+      flex: 1;
+      align-content: space-between;
+    }
+
+    .card-body {
+      flex: 1;
+      align-content: start;
+    }
+
+    .spotlight h3 {
+      font-size: clamp(1.45rem, 3vw, 2rem);
+      letter-spacing: -0.04em;
+    }
+
+    .muted {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .chips,
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 31px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: #e7eeff;
+      background: rgba(255, 255, 255, 0.065);
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(10px, 1.8vw, 12px);
+    }
+
+    .stat {
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: clamp(1.35rem, 3vw, 2rem);
+      letter-spacing: -0.04em;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      margin-top: 20px;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.055);
+    }
+
+    .filter-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-btn,
+    .select {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 10px 13px;
+      color: var(--soft);
+      background: rgba(255, 255, 255, 0.06);
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      color: #04101f;
+      background: linear-gradient(135deg, var(--accent-2), #a7f3d0);
+      border-color: transparent;
+      font-weight: 900;
+    }
+
+    .select {
+      min-width: 190px;
+      outline: 0;
+    }
+
+    .section {
+      margin-top: 20px;
+      padding: clamp(20px, 4vw, 34px);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    .section h2 {
+      margin-top: 10px;
+      font-size: clamp(1.85rem, 4.8vw, 3.1rem);
+      line-height: 1;
+      letter-spacing: -0.065em;
+    }
+
+    .section-copy {
+      max-width: 570px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: clamp(14px, 2vw, 18px);
+    }
+
+    .deal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(14px, 2vw, 18px);
+    }
+
+    .rank-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: clamp(14px, 2vw, 18px);
+    }
+
+    .game-card,
+    .deal-card,
+    .rank-list,
+    .news-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--card);
+      transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+    }
+
+    .game-card,
+    .deal-card,
+    .news-card {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 100%;
+    }
+
+    .game-card:hover,
+    .deal-card:hover,
+    .news-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(6, 182, 212, 0.45);
+      background: rgba(26, 36, 65, 0.9);
+    }
+
+    .game-card img,
+    .deal-card img {
+      height: clamp(138px, 14vw, 168px);
+      object-fit: cover;
+      background: #111827;
+    }
+
+    .card-title {
+      font-size: 1.04rem;
+      line-height: 1.25;
+      letter-spacing: -0.025em;
+    }
+
+    .card-desc {
+      display: -webkit-box;
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 0.91rem;
+      line-height: 1.5;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    .score-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--soft);
+      font-size: 0.88rem;
+      overflow-wrap: anywhere;
+    }
+
+    .score {
+      color: var(--success);
+      font-weight: 950;
+    }
+
+    .price {
+      color: var(--warning);
+      font-weight: 950;
+    }
+
+    .old-price {
+      color: var(--muted);
+      text-decoration: line-through;
+      font-size: 0.85rem;
+    }
+
+    .rank-list {
+      padding: 10px;
+    }
+
+    .rank-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 13px;
+      border-radius: 17px;
+    }
+
+    .rank-item + .rank-item {
+      border-top: 1px solid var(--line);
+    }
+
+    .rank-number {
+      width: 33px;
+      height: 33px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: #04101f;
+      background: linear-gradient(135deg, #a78bfa, #67e8f9);
+      font-weight: 950;
+    }
+
+    .rank-title {
+      font-weight: 850;
+      letter-spacing: -0.02em;
+      overflow-wrap: anywhere;
+    }
+
+    .rank-meta {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      overflow-wrap: anywhere;
+    }
+
+    .release-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+      gap: clamp(14px, 2vw, 18px);
+    }
+
+    .news-card {
+      padding: 20px;
+    }
+
+    .news-card h3 {
+      margin-top: 12px;
+      font-size: 1.25rem;
+      letter-spacing: -0.035em;
+    }
+
+    .news-card p {
+      margin-top: 10px;
+      color: var(--muted);
+      line-height: 1.62;
+    }
+
+    .loader,
+    .error {
+      grid-column: 1 / -1;
+      padding: 22px;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius-md);
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.055);
+      text-align: center;
+    }
+
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 28px 4px 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 1240px) {
+      .game-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 1080px) {
+      .hero,
+      .rank-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-side {
+        grid-template-rows: auto auto;
+      }
+
+      .deal-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .topbar {
+        align-items: stretch;
+        flex-wrap: wrap;
+      }
+
+      .nav {
+        order: 3;
+        width: 100%;
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      .search {
+        width: min(100%, 360px);
+        min-width: 0;
+      }
+
+      .game-grid,
+      .deal-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        width: min(100% - 20px, 1240px);
+        padding-top: 10px;
+      }
+
+      .topbar,
+      .panel,
+      .spotlight {
+        border-radius: var(--radius-md);
+      }
+
+      .brand {
+        width: 100%;
+      }
+
+      .search {
+        width: 100%;
+      }
+
+      .hero {
+        padding-top: 28px;
+      }
+
+      .hero-main {
+        min-height: auto;
+        padding: 26px 20px;
+      }
+
+      .hero-actions,
+      .section-head,
+      .filters {
+        align-items: stretch;
+        grid-template-columns: 1fr;
+        flex-direction: column;
+      }
+
+      .filter-buttons {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 3px;
+      }
+
+      .filter-btn {
+        flex: 0 0 auto;
+      }
+
+      .button,
+      .ghost-button,
+      .select {
+        width: 100%;
+      }
+
+      .stat-grid,
+      .game-grid,
+      .deal-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .game-card img,
+      .deal-card img,
+      .spotlight img {
+        height: 190px;
+      }
+    }
+
+    @media (max-width: 460px) {
+      .page {
+        width: min(100% - 16px, 1220px);
+      }
+
+      .topbar {
+        padding: 10px;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 11vw, 2.8rem);
+        line-height: 0.96;
+        letter-spacing: -0.07em;
+      }
+
+      .lead {
+        font-size: 0.96rem;
+        line-height: 1.56;
+      }
+
+      .section {
+        padding: 18px 14px;
+      }
+
+      .rank-item {
+        grid-template-columns: auto minmax(0, 1fr);
+      }
+
+      .rank-item .score {
+        grid-column: 2;
+        justify-self: start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar" aria-label="Навигация сайта">
+      <a class="brand" href="#top" aria-label="LevelUp Hub">
+        <span class="brand-mark" data-site-mark>LU</span>
+        <span data-site-name>LevelUp Hub</span>
+      </a>
+      <nav class="nav" aria-label="Разделы">
+        <a href="#catalog">Каталог</a>
+        <a href="#deals">Скидки</a>
+        <a href="#ratings">Рейтинги</a>
+        <a href="#releases">Новинки</a>
+      </nav>
+      <label class="search" aria-label="Поиск по каталогу">
+        <span>⌕</span>
+        <input id="search-input" type="search" placeholder="Найти игру">
+      </label>
+    </header>
+
+    <section class="hero" id="top">
+      <div class="hero-main panel">
+        <div class="hero-content">
+          <span class="eyebrow">200–300 игр обновляются онлайн</span>
+          <h1>Игры, рейтинги и лучшие предложения в одном месте</h1>
+          <p class="lead">Следите за популярными релизами, сравнивайте оценки, жанры, платформы и цены. Витрина автоматически собирает большой каталог из открытых игровых API и показывает подборки в формате современного медиа-портала.</p>
+          <div class="hero-actions">
+            <a class="button" href="#catalog">Перейти в каталог</a>
+            <a class="ghost-button" href="#deals">Смотреть скидки</a>
+          </div>
+          <div class="filters" aria-label="Фильтры каталога">
+            <div class="filter-buttons" id="genre-filters">
+              <button class="filter-btn active" type="button" data-genre="all">Все жанры</button>
+            </div>
+            <select class="select" id="sort-select" aria-label="Сортировка">
+              <option value="rating">Сначала высокий рейтинг</option>
+              <option value="recommendations">Сначала популярные</option>
+              <option value="name">По названию</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <aside class="hero-side" aria-label="Главная подборка">
+        <article class="spotlight panel" id="spotlight">
+          <div class="loader">Загружаем игру дня...</div>
+        </article>
+        <div class="stat-grid">
+          <div class="stat">
+            <strong id="games-count">0</strong>
+            <span>игр в каталоге</span>
+          </div>
+          <div class="stat">
+            <strong id="genres-count">0</strong>
+            <span>жанров</span>
+          </div>
+          <div class="stat">
+            <strong id="best-score">0</strong>
+            <span>лучший рейтинг</span>
+          </div>
+          <div class="stat">
+            <strong id="deals-count">0</strong>
+            <span>предложений</span>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section panel" id="catalog">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Steam Store API + SteamSpy API</span>
+          <h2>Популярные игры</h2>
+        </div>
+        <p class="section-copy">Каталог собирает 200–300 игр из нескольких рейтингов SteamSpy, дополняет первые позиции данными Steam Store и показывает обложку, жанры, описание, разработчика, платформы, рекомендации, цену и оценку.</p>
+      </div>
+      <div class="game-grid" id="games-grid">
+        <div class="loader">Собираем 200–300 игр из SteamSpy и Steam Store...</div>
+      </div>
+    </section>
+
+    <section class="section panel" id="deals">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">CheapShark API</span>
+          <h2>Скидки и цены</h2>
+        </div>
+        <p class="section-copy">Раздел собирает предложения магазина Steam: текущую цену, прежнюю цену, процент скидки, оценку Steam, Metacritic и внутренний рейтинг сделки.</p>
+      </div>
+      <div class="deal-grid" id="deals-grid">
+        <div class="loader">Получаем список предложений...</div>
+      </div>
+    </section>
+
+    <section class="section panel" id="ratings">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">SteamSpy API</span>
+          <h2>Игры в тренде</h2>
+        </div>
+        <p class="section-copy">Блок рейтингов использует открытые данные SteamSpy и показывает игры, которые активно набирают аудиторию в Steam.</p>
+      </div>
+      <div class="rank-grid">
+        <div class="rank-list" id="trend-list">
+          <div class="loader">Загружаем тренды SteamSpy...</div>
+        </div>
+        <div class="rank-list" id="genre-list">
+          <div class="loader">Собираем статистику жанров...</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section panel" id="releases">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Редакционная лента</span>
+          <h2>Что посмотреть дальше</h2>
+        </div>
+        <p class="section-copy">Короткие карточки помогают быстро перейти от каталога к подборкам: новинки, кооперативные игры и проекты с высокой оценкой сообщества.</p>
+      </div>
+      <div class="release-grid" id="release-grid"></div>
+    </section>
+
+    <footer class="footer">
+      <span data-site-name>LevelUp Hub</span>
+      <span>Данные предоставляются публичными API Steam Store, CheapShark и SteamSpy.</span>
+    </footer>
+  </main>
+
+  <script src="site-config.js"></script>
+  <script>
+    const SITE_NAME = (window.SITE_CONFIG && window.SITE_CONFIG.resolved && window.SITE_CONFIG.resolved.name) || "LevelUp Hub";
+    const detailedAppIds = [730, 570, 1172470, 1245620, 1091500, 413150, 292030, 1145360, 620, 105600, 892970, 578080, 1086940, 271590, 242760, 4000, 252490, 381210, 359550, 1222670, 582010, 1174180, 394360, 236390];
+    const steamSpyCatalogRequests = ["top100in2weeks", "top100forever", "top100owned"];
+    const fallbackGames = [
+      { title: "Counter-Strike 2", description: "Тактический командный шутер с соревновательными матчами, обновлённой графикой и активной киберспортивной сценой.", genres: ["Action", "Free To Play"], rating: 82, recommendations: 8500000, image: "https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg", release: "21 августа 2012", developer: "Valve", publisher: "Valve", platforms: ["Windows", "Linux"], price: "Бесплатно" },
+      { title: "Dota 2", description: "MOBA с глубокой стратегией, десятками героев и крупнейшими международными турнирами.", genres: ["Strategy", "Free To Play"], rating: 90, recommendations: 2200000, image: "https://cdn.cloudflare.steamstatic.com/steam/apps/570/header.jpg", release: "9 июля 2013", developer: "Valve", publisher: "Valve", platforms: ["Windows", "macOS", "Linux"], price: "Бесплатно" },
+      { title: "ELDEN RING", description: "Мрачная ролевая игра в открытом мире с масштабными битвами, исследованием и сильной атмосферой приключения.", genres: ["RPG", "Action"], rating: 94, recommendations: 900000, image: "https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/header.jpg", release: "24 февраля 2022", developer: "FromSoftware Inc.", publisher: "Bandai Namco Entertainment", platforms: ["Windows"], price: "$59.99" },
+      { title: "Stardew Valley", description: "Фермерская RPG про развитие хозяйства, знакомство с городскими жителями, подземелья и спокойный кооператив.", genres: ["Simulation", "RPG"], rating: 89, recommendations: 780000, image: "https://cdn.cloudflare.steamstatic.com/steam/apps/413150/header.jpg", release: "26 февраля 2016", developer: "ConcernedApe", publisher: "ConcernedApe", platforms: ["Windows", "macOS", "Linux"], price: "$14.99" }
+    ];
+    const fallbackDeals = [
+      { title: "Portal 2", rating: "98%", metacritic: "95", salePrice: "$9.99", normalPrice: "$9.99", savings: "0%", dealRating: "9.8", image: "https://cdn.cloudflare.steamstatic.com/steam/apps/620/header.jpg" },
+      { title: "Hades", rating: "98%", metacritic: "93", salePrice: "$24.99", normalPrice: "$24.99", savings: "0%", dealRating: "9.6", image: "https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/header.jpg" },
+      { title: "Terraria", rating: "97%", metacritic: "83", salePrice: "$9.99", normalPrice: "$9.99", savings: "0%", dealRating: "9.5", image: "https://cdn.cloudflare.steamstatic.com/steam/apps/105600/header.jpg" }
+    ];
+    const fallbackTrends = [
+      { title: "Counter-Strike 2", owners: "50,000,000 .. 100,000,000", score: 87 },
+      { title: "Dota 2", owners: "200,000,000 .. 500,000,000", score: 82 },
+      { title: "PUBG: BATTLEGROUNDS", owners: "100,000,000 .. 200,000,000", score: 58 },
+      { title: "Apex Legends", owners: "50,000,000 .. 100,000,000", score: 78 },
+      { title: "Valheim", owners: "10,000,000 .. 20,000,000", score: 94 }
+    ];
+    const editorialCards = [
+      { label: "Новинки", title: "Релизы недели", text: "Быстрый обзор проектов, которые чаще всего появляются в подборках игроков и магазина." },
+      { label: "Кооператив", title: "Игры для компании", text: "Подборка проектов, где важны командная игра, совместное прохождение и быстрый вход в матч." },
+      { label: "Высокие оценки", title: "Выбор сообщества", text: "Игры с сильными отзывами, стабильной аудиторией и заметным интересом на игровых площадках." }
+    ];
+    const placeholderImage = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300"><defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#1f2a44"/><stop offset=".55" stop-color="#312e81"/><stop offset="1" stop-color="#0e7490"/></linearGradient></defs><rect width="640" height="300" fill="url(#g)"/><circle cx="505" cy="80" r="110" fill="#06b6d4" opacity=".24"/><circle cx="140" cy="230" r="130" fill="#8b5cf6" opacity=".28"/><text x="50%" y="52%" text-anchor="middle" fill="#eef6ff" font-family="Arial, sans-serif" font-size="34" font-weight="700">' + SITE_NAME + '</text></svg>')}`;
+
+    const state = {
+      games: [],
+      deals: [],
+      trends: [],
+      activeGenre: "all",
+      sort: "rating",
+      query: ""
+    };
+
+    const elements = {
+      gamesGrid: document.querySelector("#games-grid"),
+      dealsGrid: document.querySelector("#deals-grid"),
+      trendList: document.querySelector("#trend-list"),
+      genreList: document.querySelector("#genre-list"),
+      spotlight: document.querySelector("#spotlight"),
+      genreFilters: document.querySelector("#genre-filters"),
+      searchInput: document.querySelector("#search-input"),
+      sortSelect: document.querySelector("#sort-select"),
+      releaseGrid: document.querySelector("#release-grid"),
+      gamesCount: document.querySelector("#games-count"),
+      genresCount: document.querySelector("#genres-count"),
+      bestScore: document.querySelector("#best-score"),
+      dealsCount: document.querySelector("#deals-count")
+    };
+
+    function formatNumber(value) {
+      const number = Number(value) || 0;
+      return new Intl.NumberFormat("ru-RU", { notation: number > 999999 ? "compact" : "standard" }).format(number);
+    }
+
+    function createElement(tag, className, text) {
+      const element = document.createElement(tag);
+      if (className) {
+        element.className = className;
+      }
+      if (text !== undefined && text !== null) {
+        element.textContent = text;
+      }
+      return element;
+    }
+
+    function createImage(src, alt) {
+      const image = createElement("img");
+      image.loading = "lazy";
+      image.decoding = "async";
+      image.src = src || placeholderImage;
+      image.alt = alt || "Обложка игры";
+      image.onerror = () => {
+        image.onerror = null;
+        image.src = placeholderImage;
+      };
+      return image;
+    }
+
+    function createChips(items) {
+      const row = createElement("div", "chips");
+      items.filter(Boolean).slice(0, 4).forEach((item) => row.append(createElement("span", "chip", item)));
+      return row;
+    }
+
+    function normalizeSteamGame(payload, appid) {
+      const data = payload && payload.data ? payload.data : null;
+      if (!data) {
+        return null;
+      }
+      const platforms = Object.entries(data.platforms || {}).filter(([, enabled]) => enabled).map(([name]) => name === "mac" ? "macOS" : name[0].toUpperCase() + name.slice(1));
+      return {
+        appid: data.steam_appid || appid || 0,
+        title: data.name || "Без названия",
+        description: data.short_description || "Описание появится после обновления данных магазина.",
+        genres: Array.isArray(data.genres) ? data.genres.map((genre) => genre.description) : [],
+        rating: data.metacritic && data.metacritic.score ? Number(data.metacritic.score) : 0,
+        recommendations: data.recommendations && data.recommendations.total ? Number(data.recommendations.total) : 0,
+        image: data.header_image || "",
+        release: data.release_date && data.release_date.date ? data.release_date.date : "Дата уточняется",
+        developer: Array.isArray(data.developers) ? data.developers[0] : "Разработчик уточняется",
+        publisher: Array.isArray(data.publishers) ? data.publishers[0] : "Издатель уточняется",
+        platforms,
+        price: data.is_free ? "Бесплатно" : data.price_overview && data.price_overview.final_formatted ? data.price_overview.final_formatted : "Цена уточняется"
+      };
+    }
+
+    function normalizeSteamSpyGame(item) {
+      const appid = Number(item.appid) || 0;
+      const positive = Number(item.positive) || 0;
+      const negative = Number(item.negative) || 0;
+      const rating = positive + negative ? Math.round((positive / (positive + negative)) * 100) : Number(item.userscore) || 0;
+      const genres = typeof item.genre === "string" && item.genre ? item.genre.split(",").map((genre) => genre.trim()).filter(Boolean) : ["Steam"];
+      const developer = item.developer || "Студия уточняется";
+      const publisher = item.publisher || "Издатель уточняется";
+      return {
+        appid,
+        title: item.name || "Без названия",
+        description: `${item.name || "Игра"} входит в активные подборки Steam. Карточка показывает оценку игроков, примерную аудиторию, текущий онлайн и данные издателя из SteamSpy.`,
+        genres,
+        rating,
+        recommendations: positive,
+        image: appid ? `https://cdn.cloudflare.steamstatic.com/steam/apps/${appid}/header.jpg` : "",
+        release: "Дата в Steam",
+        developer,
+        publisher,
+        platforms: ["Windows"],
+        price: item.price && item.price !== "0" ? `$${(Number(item.price) / 100).toFixed(2)}` : "Цена уточняется",
+        owners: item.owners || "Аудитория уточняется",
+        ccu: Number(item.ccu) || 0
+      };
+    }
+
+    function mergeGames(primary, detailed) {
+      const byAppId = new Map();
+      primary.forEach((game) => {
+        if (game.appid) {
+          byAppId.set(game.appid, game);
+        }
+      });
+      detailed.forEach((game) => {
+        if (!game || !game.appid) {
+          return;
+        }
+        byAppId.set(game.appid, { ...byAppId.get(game.appid), ...game });
+      });
+      return Array.from(byAppId.values()).slice(0, 300);
+    }
+
+    async function fetchSteamSpyCatalog() {
+      const requests = steamSpyCatalogRequests.map((request) => fetch(`https://steamspy.com/api.php?request=${request}`).then((response) => response.json()));
+      const results = await Promise.allSettled(requests);
+      const games = [];
+      const seen = new Set();
+      results.forEach((result) => {
+        if (result.status !== "fulfilled") {
+          return;
+        }
+        Object.values(result.value).forEach((item) => {
+          const appid = Number(item.appid) || 0;
+          if (!appid || seen.has(appid) || games.length >= 300) {
+            return;
+          }
+          seen.add(appid);
+          games.push(normalizeSteamSpyGame(item));
+        });
+      });
+      return games;
+    }
+
+    async function fetchDetailedSteamGames(appIds) {
+      const ids = Array.from(new Set([...detailedAppIds, ...appIds])).slice(0, 36);
+      const requests = ids.map((id) => fetch(`https://store.steampowered.com/api/appdetails?appids=${id}&filters=basic,genres,metacritic,recommendations,release_date,developers,publishers,platforms,price_overview`).then((response) => response.json()).then((payload) => normalizeSteamGame(payload[id], id)));
+      const results = await Promise.allSettled(requests);
+      return results.map((result) => result.status === "fulfilled" ? result.value : null).filter(Boolean);
+    }
+
+    async function fetchSteamGames() {
+      const catalog = await fetchSteamSpyCatalog();
+      if (!catalog.length) {
+        return fallbackGames;
+      }
+      const detailed = await fetchDetailedSteamGames(catalog.slice(0, 24).map((game) => game.appid));
+      return mergeGames(catalog, detailed);
+    }
+
+    async function fetchDeals() {
+      const response = await fetch("https://www.cheapshark.com/api/1.0/deals?storeID=1&pageSize=9&sortBy=Deal%20Rating");
+      const deals = await response.json();
+      return deals.map((deal) => ({
+        title: deal.title || "Без названия",
+        rating: deal.steamRatingPercent && deal.steamRatingPercent !== "0" ? `${deal.steamRatingPercent}%` : "Нет оценки",
+        metacritic: deal.metacriticScore && deal.metacriticScore !== "0" ? deal.metacriticScore : "Нет оценки",
+        salePrice: deal.salePrice ? `$${deal.salePrice}` : "Цена уточняется",
+        normalPrice: deal.normalPrice ? `$${deal.normalPrice}` : "",
+        savings: deal.savings ? `${Math.round(Number(deal.savings))}%` : "0%",
+        dealRating: deal.dealRating ? Number(deal.dealRating).toFixed(1) : "—",
+        image: deal.thumb || ""
+      }));
+    }
+
+    async function fetchTrends() {
+      const response = await fetch("https://steamspy.com/api.php?request=top100in2weeks");
+      const payload = await response.json();
+      return Object.values(payload).slice(0, 8).map((item) => {
+        const positive = Number(item.positive) || 0;
+        const negative = Number(item.negative) || 0;
+        const score = positive + negative ? Math.round((positive / (positive + negative)) * 100) : 0;
+        return { title: item.name || "Без названия", owners: item.owners || "Аудитория уточняется", score };
+      });
+    }
+
+    function getFilteredGames() {
+      const query = state.query.trim().toLowerCase();
+      const filtered = state.games.filter((game) => {
+        const genreMatch = state.activeGenre === "all" || game.genres.includes(state.activeGenre);
+        const queryMatch = !query || [game.title, game.description, game.developer, game.publisher, ...game.genres].join(" ").toLowerCase().includes(query);
+        return genreMatch && queryMatch;
+      });
+      return filtered.sort((a, b) => {
+        if (state.sort === "name") {
+          return a.title.localeCompare(b.title, "ru");
+        }
+        if (state.sort === "recommendations") {
+          return b.recommendations - a.recommendations;
+        }
+        return b.rating - a.rating;
+      });
+    }
+
+    function renderSpotlight(game) {
+      elements.spotlight.replaceChildren();
+      elements.spotlight.append(createImage(game.image, game.title));
+      const body = createElement("div", "spotlight-body");
+      body.append(createElement("span", "eyebrow", "Игра дня"));
+      body.append(createElement("h3", "", game.title));
+      body.append(createElement("p", "muted", game.description));
+      body.append(createChips([`Рейтинг ${game.rating || "—"}`, `Рекомендаций ${formatNumber(game.recommendations)}`, game.price, game.release]));
+      elements.spotlight.append(body);
+    }
+
+    function renderGames() {
+      const games = getFilteredGames();
+      elements.gamesGrid.replaceChildren();
+      if (!games.length) {
+        elements.gamesGrid.append(createElement("div", "loader", "По выбранным фильтрам игр не найдено."));
+        return;
+      }
+      games.forEach((game) => {
+        const card = createElement("article", "game-card");
+        card.append(createImage(game.image, game.title));
+        const body = createElement("div", "card-body");
+        body.append(createChips(game.genres));
+        body.append(createElement("h3", "card-title", game.title));
+        body.append(createElement("p", "card-desc", game.description));
+        body.append(createElement("div", "score-line", `Разработчик: ${game.developer}`));
+        body.append(createElement("div", "score-line", `Релиз: ${game.release}`));
+        body.append(createChips([game.price, ...game.platforms]));
+        const scoreLine = createElement("div", "score-line");
+        scoreLine.append(createElement("span", "", "Metacritic"));
+        scoreLine.append(createElement("span", "score", game.rating ? String(game.rating) : "—"));
+        body.append(scoreLine);
+        const recommendations = createElement("div", "score-line");
+        recommendations.append(createElement("span", "", "Рекомендации"));
+        recommendations.append(createElement("span", "score", formatNumber(game.recommendations)));
+        body.append(recommendations);
+        card.append(body);
+        elements.gamesGrid.append(card);
+      });
+    }
+
+    function renderDeals() {
+      elements.dealsGrid.replaceChildren();
+      state.deals.forEach((deal) => {
+        const card = createElement("article", "deal-card");
+        card.append(createImage(deal.image, deal.title));
+        const body = createElement("div", "card-body");
+        body.append(createChips([`Скидка ${deal.savings}`, `Steam ${deal.rating}`, `Metacritic ${deal.metacritic}`]));
+        body.append(createElement("h3", "card-title", deal.title));
+        const priceLine = createElement("div", "score-line");
+        priceLine.append(createElement("span", "price", deal.salePrice));
+        if (deal.normalPrice && deal.normalPrice !== deal.salePrice) {
+          priceLine.append(createElement("span", "old-price", deal.normalPrice));
+        }
+        body.append(priceLine);
+        const ratingLine = createElement("div", "score-line");
+        ratingLine.append(createElement("span", "", "Рейтинг сделки"));
+        ratingLine.append(createElement("span", "score", deal.dealRating));
+        body.append(ratingLine);
+        card.append(body);
+        elements.dealsGrid.append(card);
+      });
+    }
+
+    function renderTrends() {
+      elements.trendList.replaceChildren();
+      state.trends.forEach((trend, index) => {
+        const row = createElement("div", "rank-item");
+        row.append(createElement("span", "rank-number", String(index + 1)));
+        const info = createElement("div");
+        info.append(createElement("div", "rank-title", trend.title));
+        info.append(createElement("div", "rank-meta", trend.owners));
+        row.append(info);
+        row.append(createElement("span", "score", `${trend.score}%`));
+        elements.trendList.append(row);
+      });
+    }
+
+    function renderGenreStats() {
+      const counts = new Map();
+      state.games.forEach((game) => game.genres.forEach((genre) => counts.set(genre, (counts.get(genre) || 0) + 1)));
+      const rows = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 8);
+      elements.genreList.replaceChildren();
+      rows.forEach(([genre, count], index) => {
+        const row = createElement("div", "rank-item");
+        row.append(createElement("span", "rank-number", String(index + 1)));
+        const info = createElement("div");
+        info.append(createElement("div", "rank-title", genre));
+        info.append(createElement("div", "rank-meta", `${count} игр в каталоге`));
+        row.append(info);
+        row.append(createElement("span", "score", `${Math.round((count / state.games.length) * 100)}%`));
+        elements.genreList.append(row);
+      });
+    }
+
+    function renderGenreFilters() {
+      const genres = Array.from(new Set(state.games.flatMap((game) => game.genres))).slice(0, 7);
+      elements.genreFilters.replaceChildren();
+      const allButton = createElement("button", "filter-btn active", "Все жанры");
+      allButton.type = "button";
+      allButton.dataset.genre = "all";
+      elements.genreFilters.append(allButton);
+      genres.forEach((genre) => {
+        const button = createElement("button", "filter-btn", genre);
+        button.type = "button";
+        button.dataset.genre = genre;
+        elements.genreFilters.append(button);
+      });
+    }
+
+    function renderEditorial() {
+      elements.releaseGrid.replaceChildren();
+      editorialCards.forEach((card) => {
+        const article = createElement("article", "news-card");
+        article.append(createElement("span", "eyebrow", card.label));
+        article.append(createElement("h3", "", card.title));
+        article.append(createElement("p", "", card.text));
+        elements.releaseGrid.append(article);
+      });
+    }
+
+    function updateStats() {
+      const genres = new Set(state.games.flatMap((game) => game.genres));
+      const best = Math.max(...state.games.map((game) => game.rating || 0), 0);
+      elements.gamesCount.textContent = state.games.length;
+      elements.genresCount.textContent = genres.size;
+      elements.bestScore.textContent = best || "—";
+      elements.dealsCount.textContent = state.deals.length;
+    }
+
+    function bindEvents() {
+      elements.genreFilters.addEventListener("click", (event) => {
+        const button = event.target.closest("button[data-genre]");
+        if (!button) {
+          return;
+        }
+        state.activeGenre = button.dataset.genre;
+        elements.genreFilters.querySelectorAll(".filter-btn").forEach((item) => item.classList.toggle("active", item === button));
+        renderGames();
+      });
+      elements.searchInput.addEventListener("input", (event) => {
+        state.query = event.target.value;
+        renderGames();
+      });
+      elements.sortSelect.addEventListener("change", (event) => {
+        state.sort = event.target.value;
+        renderGames();
+      });
+    }
+
+    async function init() {
+      renderEditorial();
+      bindEvents();
+      try {
+        const games = await fetchSteamGames();
+        state.games = games.length ? games : fallbackGames;
+      } catch (error) {
+        state.games = fallbackGames;
+      }
+      try {
+        const deals = await fetchDeals();
+        state.deals = deals.length ? deals : fallbackDeals;
+      } catch (error) {
+        state.deals = fallbackDeals;
+      }
+      try {
+        const trends = await fetchTrends();
+        state.trends = trends.length ? trends : fallbackTrends;
+      } catch (error) {
+        state.trends = fallbackTrends;
+      }
+      renderGenreFilters();
+      renderSpotlight(state.games[0]);
+      renderGames();
+      renderDeals();
+      renderTrends();
+      renderGenreStats();
+      updateStats();
+    }
+
+    init();
+  </script>
+</body>
+</html>
