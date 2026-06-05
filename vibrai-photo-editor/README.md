@@ -29,3 +29,7 @@ vibrai-photo-editor/
 
 - Три языка **RU / EN / DE** из одного словаря `I18N` в `app.js` (атрибуты
   `data-i18n`). Язык определяетс
+## Связь
+
+Вопросы, идеи и предложения — в Telegram-чате:
+[t.me/+O5jAhwcYdYhlY2Yy](https://t.me/+O5jAhwcYdYhlY2Yy).

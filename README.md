@@ -93,6 +93,11 @@ Disallow: /
 (`https://site.com/robots.txt`) — поэтому файл лежит в корне папки шаблона.
 Готовый образец: [`esports-stream-template/robots.txt`](./esports-stream-template/robots.txt).
 
+## Связь
+
+Вопросы, идеи и предложения — в Telegram-чате:
+[t.me/+O5jAhwcYdYhlY2Yy](https://t.me/+O5jAhwcYdYhlY2Yy).
+
 ## Благодарности
 
 Вдохновлено пользователем [SmallPoppa](https://github.com/SmallPoppa).

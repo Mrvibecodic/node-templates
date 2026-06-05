@@ -121,3 +121,7 @@ src iframe-плеера. Для Twitch-камер ставьте `type: "twitch"
   `previews/worldzoo-stream-template-desktop.png`); для боевого домена
   замените `og:image` в `index.html` на абсолютный URL.
 - К подключениям CSS/JS применён статический кэш-бастинг через `?v=`.
+## Связь
+
+Вопросы, идеи и предложения — в Telegram-чате:
+[t.me/+O5jAhwcYdYhlY2Yy](https://t.me/+O5jAhwcYdYhlY2Yy).
