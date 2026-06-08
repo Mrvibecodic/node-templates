@@ -250,4 +250,94 @@
     });
   }
   function openModal(id) { var m = document.getElementById(id); if (m) { m.classList.add("open"); document.body.style.overflow = "hidden"; var f = m.querySelector("input"); if (f) setTimeout(function () { f.focus(); }, 60); } }
-  function closeModal(m) { if (m) { m.classList.remove("open
+  function closeModal(m) {
+    if (!m) return;
+    m.classList.remove("open");
+    if (!document.querySelector(".modal-root.open")) document.body.style.overflow = "";
+  }
+
+  // Bottom-centered toast notifications.
+  var toastHost = null;
+  function toast(message) {
+    if (!toastHost) { toastHost = el("div", "toast-host"); document.body.appendChild(toastHost); }
+    var t = el("div", "toast", '<span class="dot"></span><span class="t"></span>');
+    t.querySelector(".t").textContent = message;
+    toastHost.appendChild(t);
+    requestAnimationFrame(function () { t.classList.add("in"); });
+    setTimeout(function () {
+      t.classList.remove("in");
+      setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 280);
+    }, 3200);
+  }
+
+  // Hamburger / mobile nav drawer.
+  function initNav() {
+    var toggle = document.getElementById("nav-toggle");
+    var links = document.getElementById("nav-links");
+    if (!toggle || !links) return;
+    function close() { links.classList.remove("open"); toggle.classList.remove("active"); toggle.setAttribute("aria-expanded", "false"); }
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.addEventListener("click", function () {
+      var open = links.classList.toggle("open");
+      toggle.classList.toggle("active", open);
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    links.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", close); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
+  }
+
+  // Count-up for the hero stats once they scroll into view.
+  function animateCount(node) {
+    var target = parseFloat(node.dataset.count) || 0;
+    var suffix = node.dataset.suffix || "";
+    var dur = 1400, start = null;
+    function step(ts) {
+      if (start === null) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      node.textContent = Math.round(target * eased).toLocaleString("en-US") + suffix;
+      if (p < 1) requestAnimationFrame(step);
+      else node.textContent = target.toLocaleString("en-US") + suffix;
+    }
+    requestAnimationFrame(step);
+  }
+  function initCounters() {
+    var nodes = Array.prototype.slice.call(document.querySelectorAll("[data-count]"));
+    if (!nodes.length) return;
+    if (!("IntersectionObserver" in window)) { nodes.forEach(animateCount); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { animateCount(en.target); io.unobserve(en.target); } });
+    }, { threshold: 0.4 });
+    nodes.forEach(function (n) { io.observe(n); });
+  }
+
+  // Reveal-on-scroll for elements tagged with data-reveal.
+  function initReveal() {
+    var nodes = Array.prototype.slice.call(document.querySelectorAll("[data-reveal]"));
+    if (!nodes.length) return;
+    if (!("IntersectionObserver" in window)) { nodes.forEach(function (n) { n.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
+    }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+    nodes.forEach(function (n) { io.observe(n); });
+  }
+
+  function initYear() {
+    var y = document.getElementById("year");
+    if (y) y.textContent = new Date().getFullYear();
+  }
+
+  function init() {
+    initHeroBg();
+    buildTabs();
+    loadSchedule();
+    initModals();
+    initNav();
+    initCounters();
+    initReveal();
+    initYear();
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();

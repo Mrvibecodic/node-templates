@@ -465,6 +465,7 @@ sub load_map {
 my @TOK = load_map($ENV{TOKEN_MAP});
 my @VAR = load_map($ENV{VAR_MAP});
 my $mode = $ENV{MODE} || '';
+my %TOKMAP = map { $_->[0] => $_->[1] } @TOK;
 
 sub rename_ids {
     my ($s) = @_;
@@ -486,6 +487,33 @@ sub rename_vars {
     return $s;
 }
 
+# Переименование внутри JS-строк — ТОЛЬКО когда строка целиком является
+# ссылкой на класс/id: "tok", ".tok", "#tok" или список через пробел
+# ("tab active", ".a .b"). Свободный текст, ключи i18n ("nav.feedback"),
+# URL и шаблоны ${...} не трогаются (любая часть-не-токен => литерал как был).
+sub rename_js_literal {
+    my ($lit) = @_;
+    return $lit if length($lit) < 2;
+    my $qc    = substr($lit, 0, 1);
+    my $inner = substr($lit, 1, length($lit) - 2);
+    return $lit unless $inner =~ /\A[.#]?[A-Za-z0-9_-]+(?:[ \t]+[.#]?[A-Za-z0-9_-]+)*\z/;
+    my @parts = split /([ \t]+)/, $inner;
+    my $changed = 0;
+    my @out;
+    for my $part (@parts) {
+        if ($part =~ /\A[ \t]+\z/) { push @out, $part; next; }
+        my ($pre, $name) = $part =~ /\A([.#]?)([A-Za-z0-9_-]+)\z/;
+        if (defined $name && exists $TOKMAP{$name}) {
+            push @out, $pre . $TOKMAP{$name};
+            $changed = 1;
+        } else {
+            return $lit;
+        }
+    }
+    return $lit unless $changed;
+    return $qc . join('', @out) . $qc;
+}
+
 local $/;
 my $data = <STDIN>;
 
@@ -498,7 +526,7 @@ if ($mode eq 'css') {
     $data = rename_vars($data);
 }
 elsif ($mode eq 'html') {
-    $data =~ s{((?:class|id)\s*=\s*)("[^"]*"|'[^']*'|[^\s"'=<>`]+)}{
+    $data =~ s{((?<![\w-])(?:class|id)\s*=\s*)("[^"]*"|'[^']*'|[^\s"'=<>`]+)}{
         my ($pre, $raw) = ($1, $2);
         my $qc = substr($raw, 0, 1);
         if ($qc eq '"' || $qc eq "'") {
@@ -511,12 +539,7 @@ elsif ($mode eq 'html') {
     $data = rename_vars($data) if @VAR;
 }
 elsif ($mode eq 'js') {
-    $data =~ s/('(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|`(?:\\.|[^`\\])*`)/
-        my $lit = $1;
-        my $qc  = substr($lit, 0, 1);
-        my $inner = substr($lit, 1, length($lit) - 2);
-        $qc . rename_ids($inner) . $qc;
-    /ge;
+    $data =~ s/('(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|`(?:\\.|[^`\\])*`)/ rename_js_literal($1) /ge;
 }
 else {
 }
