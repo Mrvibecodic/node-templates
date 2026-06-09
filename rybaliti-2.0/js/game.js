@@ -320,9 +320,10 @@ function update(dt){
       if(sf.chat<=0){
         sf.chat = 2.6+Math.random()*3.6;
         if(bubbles.length<2){
-          const sx=sf.x+(Math.random()-0.5)*70;
+          let sx=sf.x+(Math.random()-0.5)*70;
+          if(Math.abs(sx-bob.x)<72){ sx = bob.x + (sx<bob.x?-1:1)*(72+Math.random()*46); }
           const ok=bubbles.every(b=>Math.abs(b.x-sx)>90 || Math.abs(b.y-sf.y)>46);
-          if(ok) bubbles.push({ x:sx, y:sf.y, text:FP_WORDS[(Math.random()*FP_WORDS.length)|0], t:0, life:2.2 });
+          if(ok) bubbles.push({ x:sx, y:sf.y, text:FP_WORDS[(Math.random()*FP_WORDS.length)|0], t:0, life:3.0 });
         }
       }
     }
@@ -388,6 +389,19 @@ addEventListener("mouseup", e=>{
   if(e.button!==0) return; mouseDown=false;
   if(state==="charging") releaseCast();
 });
+
+function touchPt(e){ const t=e.touches[0]||e.changedTouches[0]; if(t){ mouse.x=t.clientX; mouse.y=t.clientY; } }
+cv.addEventListener("touchstart", e=>{
+  e.preventDefault(); touchPt(e); mouseDown=true;
+  if(state==="idle") startCharge();
+  else if(state==="bite"||state==="waiting") tryHook();
+}, {passive:false});
+cv.addEventListener("touchmove", e=>{ e.preventDefault(); touchPt(e); }, {passive:false});
+addEventListener("touchend", e=>{
+  mouseDown=false;
+  if(state==="charging") releaseCast();
+}, {passive:false});
+addEventListener("touchcancel", ()=>{ mouseDown=false; });
 
 function updateHUD(){
   document.getElementById("coinsP").innerHTML = S.coins+' <small>очков</small>';

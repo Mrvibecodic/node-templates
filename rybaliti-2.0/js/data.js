@@ -53,7 +53,7 @@ const BAITS = [
   {id:"livebait",n:"Живец",   em:"🐠", cost:1500, tier:4, pack:5, desc:"Шанс на легендарный и особый улов!"},
 ];
 
-const FP_WORDS = ["qq","ff","qq","ff","hy2","pq","бс","яклауд","АВГ!","AWG","AmneziaWG","naiveproxy","chrome","safari",
+const FP_WORDS = ["qq","ff","qq","ff","hy2","pq","бс","яклауд","АВГ!","AWG","AmneziaWG","naiveproxy","TCP банят","КАСКАД","Дабл VPN","Мультиадмин","chrome","safari",
   "ios","360","edge","random","randomized","REALITY?","vless","hello?","utls","qq?","ff!","tls1.3","client\nhello"];
 
 const MONKEY_LINES = ["клюёт?","ну как рыбалка?","много поймал?","покажи улов 👀",
