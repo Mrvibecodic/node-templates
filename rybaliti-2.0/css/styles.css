@@ -149,3 +149,15 @@ canvas { display:block; }
   .coins { font-size:14px; }
   .gear { font-size:9.5px; }
 }
+
+@media (max-width:600px){
+  #title .logo { display:none; }
+  #title { top:8px; }
+  #tod { font-size:11px; margin-top:0; }
+  #fight { width:94vw; bottom:78px; }
+  #fight .lbl { font-size:10.5px; margin:3px 0 2px; }
+  #fight .bar { height:15px; }
+  #hint { bottom:8px; max-width:66vw; }
+  #atlasBtn { font-size:24px; padding:4px 11px; line-height:1; }
+  #atlasBtn .btxt { display:none; }
+}
