@@ -76,7 +76,7 @@ canvas { display:block; }
 .card::-webkit-scrollbar-thumb:hover { background:linear-gradient(180deg,#4db6ff,#2b6f95); }
 .card { scrollbar-width:thin; scrollbar-color:#2b8fd4 rgba(120,200,255,.06); }
 
-#special { top:128px; left:50%; transform:translateX(-50%); display:none; max-width:70vw; text-align:center; font-size:14px; font-weight:700; color:#ffe9a0;
+#special { position:absolute; top:128px; left:50%; transform:translateX(-50%); display:none; max-width:70vw; text-align:center; font-size:14px; font-weight:700; color:#ffe9a0;
   background:linear-gradient(90deg,rgba(60,40,10,.7),rgba(80,55,15,.7)); border:1px solid rgba(255,210,90,.45);
   border-radius:20px; padding:7px 22px; box-shadow:0 4px 20px rgba(255,200,80,.18); animation:glow 2.6s ease-in-out infinite; }
 #special b { color:#fff0b0; }
@@ -110,7 +110,6 @@ canvas { display:block; }
 
 #intro { position:absolute; inset:0; background:linear-gradient(180deg,#0a1c2c,#06121d); display:flex; flex-direction:column;
          align-items:center; justify-content:center; z-index:30; text-align:center; color:#dff1ff; }
-#intro h1 { font-size:46px; color:#bfefff; letter-spacing:1px; text-shadow:0 4px 20px rgba(80,180,255,.4); }
 #intro .tag { font-size:16px; color:#7fb8d8; letter-spacing:4px; margin:6px 0 28px; }
 #intro .play { cursor:pointer; pointer-events:auto; font-size:20px; font-weight:800; padding:14px 46px; border:none; border-radius:30px;
                background:linear-gradient(90deg,#3fae5a,#5fe06b); color:#06210f; box-shadow:0 8px 30px rgba(95,224,107,.4); }
