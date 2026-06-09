@@ -35,7 +35,7 @@ function loadSprites(){
     img._ok=false;
     img.onload=()=>{ img._ok=true; };
     img.onerror=()=>{ img._ok=false; };
-    img.src=SPRITE_BASE+n+".png";
+    img.src=SPRITE_BASE+n+".webp";
     SPRITES[n]=img;
   }
 }
@@ -53,7 +53,7 @@ addEventListener("resize", resize); resize();
 let mouse={x:W/2,y:H*0.6}, mouseDown=false;
 cv.addEventListener("mousemove", e=>{ mouse.x=e.clientX; mouse.y=e.clientY; });
 
-let gCycleT=0, gLight=1, gNight=0, gSunSin=0, gTwi=0;
+let gCycleT=0, gLight=1, gNight=0, gSunSin=0, gTwi=0, gMorning=0;
 const STARS=[]; for(let i=0;i<80;i++) STARS.push({x:Math.random(), y:Math.random()*0.45, r:Math.random()*1.3+0.3, tw:Math.random()*6});
 const BIRDS=[]; for(let i=0;i<3;i++) BIRDS.push({x:Math.random(), y:0.12+Math.random()*0.18, sp:0.01+Math.random()*0.015, ph:Math.random()*6});
 const CLOUDS=[]; for(let i=0;i<5;i++) CLOUDS.push({x:Math.random()*1.2-0.1, y:0.08+Math.random()*0.2, sc:0.7+Math.random()*0.9, sp:0.004+Math.random()*0.006});
@@ -65,6 +65,7 @@ let bob={x:W/2,y:H*0.6,tx:W/2,ty:H*0.6,t:0};
 let castFrom={x:0,y:0};
 let biteTimer=0, biteWindow=0, hooked=null;
 let tension=0, dist=100, struggle=0, fishWeightFactor=1, maxTenRatio=0;
+let runActive=0, runCd=0;
 let ripples=[], splashes=[], shadowFish=[], bubbles=[];
 let approachT=0;
 
@@ -106,23 +107,29 @@ function updateMonkey(dt){
   }
 }
 
-let specialDay=-1, todaySpecial=null;
+let specialDay=-1, todaySpecial=null, nextSpecialDay=0;
 function pickSpecial(dayId){
   specialDay=dayId;
-  todaySpecial=SPECIALS[(Math.random()*SPECIALS.length)|0];
   const el=document.getElementById("special");
-  el.style.display="block";
-  el.innerHTML="🌟 Сегодня клюёт особая рыба: <b>"+todaySpecial.n+"</b> — нужна крепкая снасть (карбон+, лучше 🔱 эпик)!";
+  if(dayId>=nextSpecialDay){
+    todaySpecial=SPECIALS[(Math.random()*SPECIALS.length)|0];
+    nextSpecialDay = dayId + 4 + ((Math.random()*3)|0);
+    el.style.display="block";
+    el.innerHTML="🌟 Сегодня клюёт особая рыба: <b>"+todaySpecial.n+"</b> — нужна крепкая снасть (карбон+, лучше 🔱 эпик)!";
+  } else {
+    todaySpecial=null;
+    el.style.display="none";
+  }
 }
 
 let HOTEL=null;
 function buildHotel(){
-  const cols=5, rows=6, pat=[];
-  for(let r=0;r<rows;r++){ const row=[];
-    for(let c=0;c<cols;c++){ const v=Math.random();
-      row.push(v<0.18?"lit":(v<0.42?"broken":"dark")); }
+  const rooms=6, floors=2, pat=[];
+  for(let f=0;f<floors;f++){ const row=[];
+    for(let c=0;c<rooms;c++){ const v=Math.random();
+      row.push(v<0.22?"lit":(v<0.45?"broken":"dark")); }
     pat.push(row); }
-  HOTEL={cols,rows,pat};
+  HOTEL={rooms,floors,pat};
 }
 buildHotel();
 
@@ -175,7 +182,7 @@ function startWaiting(){
   state="waiting";
   ripples.push({x:bob.x,y:bob.y,r:6,a:1});
   splashes.push({x:bob.x,y:bob.y,t:0});
-  const base = 3.2 + Math.random()*5.5;
+  const base = (3.2 + Math.random()*5.5) * (1 + gMorning*0.9);
   biteTimer = base / rod().bite;
   approachT = 0;
   shadowFish=[]; bubbles=[];
@@ -184,9 +191,10 @@ function startWaiting(){
     const col=FISH_SHADOW_COLS[(Math.random()*FISH_SHADOW_COLS.length)|0];
     shadowFish.push({ x:bob.x+(Math.random()-0.5)*170, y:bob.y+28+Math.random()*46,
       tx:bob.x, ty:bob.y, sp:0.4+Math.random()*0.5, ph:Math.random()*6, size:9+Math.random()*16,
-      chat:0.8+Math.random()*2.5, colD:col[0], colL:col[1] });
+      chat:(0.8+Math.random()*2.5)*(1-gMorning*0.45), colD:col[0], colL:col[1] });
   }
-  setHint(gNight>0.6 ? "🌙 Ночь — ждём крупную рыбу… 🎣" : "Жди поклёвки… 🎣");
+  setHint(gMorning>0.4 ? "🌅 Утро — рыба болтает, но клюёт лениво… ☕"
+        : gNight>0.6 ? "🌙 Ночь — ждём крупную рыбу… 🎣" : "Жди поклёвки… 🎣");
 }
 function triggerBite(){
   state="bite";
@@ -212,8 +220,10 @@ function tryHook(){
     fishWeightFactor = hooked.weight / (avgW(hooked.fish));
     if(hooked.isSpecial) fishWeightFactor = Math.min(fishWeightFactor, 1.1);
     struggle=0;
+    runActive=0; runCd=3.5+Math.random()*3;
     document.getElementById("fight").style.display="block";
-    setHint("Вываживай! Держи мышь, но следи за <b>натяжением</b>!");
+    setHint(hooked.fish.trash ? "Хм… что-то тяжёлое и вялое. Тяни! 🤨"
+      : "Вываживай! Держи мышь, но следи за <b>натяжением</b>!");
   } else if(state==="waiting"){
     setHint("Рано! Рыба ещё не клюнула… ждём дальше 🐟");
   }
@@ -227,7 +237,7 @@ function landFish(){
   S.seenFish[f.fish.n]=true;
   S.log.unshift({n:f.fish.n, w:+f.weight.toFixed(2), pts:pts, rar:f.fish.rar, t:Date.now()});
   if(S.log.length>100) S.log.pop();
-  if(!S.best || f.weight>S.best.w) S.best={n:f.fish.n, w:+f.weight.toFixed(2)};
+  if(!f.fish.trash && (!S.best || f.weight>S.best.w)) S.best={n:f.fish.n, w:+f.weight.toFixed(2)};
   save(); updateHUD();
   showCatch(f, pts);
   splashes.push({x:bob.x,y:bob.y,t:0,big:true});
@@ -250,7 +260,7 @@ function rollFish(){
   const bt = bait().tier;
   const nb = gNight;
   if(todaySpecial){
-    const chance = Math.min(0.04, 0.004*(1+bt*0.7)*(1+nb*0.8));
+    const chance = Math.min(0.025, 0.0025*(1+bt*0.7)*(1+nb*0.8));
     if(Math.random()<chance){
       const c=todaySpecial;
       const w=c.w[0]+Math.random()*(c.w[1]-c.w[0]);
@@ -259,6 +269,7 @@ function rollFish(){
   }
   const weights = FISH.map(f=>{
     if(f.minBait > bt) return 0;
+    if(f.trash) return 36;
     let base = RAR_BASE[f.rar];
     const boost = Math.pow(1.9, bt + nb*1.4);
     if(f.rar>0) base *= (1 + (boost-1)*(f.rar/4));
@@ -289,6 +300,7 @@ function update(dt){
   gLight=clamp(gSunSin*1.25+0.22,0,1);
   gNight=clamp(-gSunSin*1.3+0.05,0,1);
   gTwi=clamp(1-Math.abs(gSunSin)/0.42,0,1);
+  gMorning=clamp(1-Math.abs(gCycleT-0.10)/0.13,0,1);
   updateTod();
 
   const dayId=Math.floor(clock/CYCLE);
@@ -321,8 +333,8 @@ function update(dt){
       sf.x += Math.sin(sf.ph*1.5)*8*dt;
       sf.chat -= dt;
       if(sf.chat<=0){
-        sf.chat = 2.6+Math.random()*3.6;
-        if(bubbles.length<2){
+        sf.chat = (2.6+Math.random()*3.6)*(1-gMorning*0.5);
+        if(bubbles.length < (gMorning>0.3?3:2)){
           let sx=sf.x+(Math.random()-0.5)*70;
           if(Math.abs(sx-bob.x)<72){ sx = bob.x + (sx<bob.x?-1:1)*(72+Math.random()*46); }
           const ok=bubbles.every(b=>Math.abs(b.x-sx)>90 || Math.abs(b.y-sf.y)>46);
@@ -360,10 +372,28 @@ function updateTod(){
 
 function updateFight(dt){
   const ro=rod();
+  const rar=hooked.fish.rar, isTrash=!!hooked.fish.trash;
   struggle -= dt;
   if(struggle<=0){ struggle = 0.6+Math.random()*1.4; }
-  const struggling = struggle>0.5;
-  const fishPull = (8 + hooked.fish.rar*6) * fishWeightFactor;
+  const struggling = !isTrash && struggle>0.5;
+  const fishPull = (8 + rar*6) * fishWeightFactor;
+  if(runActive>0){
+    runActive -= dt;
+    dist += (10 + rar*5)*dt;
+    if(mouseDown) tension += (10 + rar*4)*dt;
+    if(runActive<=0) setHint("Вываживай! Держи мышь, но следи за <b>натяжением</b>!");
+  } else if(rar>=1 && !isTrash){
+    runCd -= dt;
+    if(runCd<=0){
+      runCd = 4+Math.random()*5;
+      if(Math.random() < 0.2 + rar*0.09){
+        runActive = 0.6 + Math.random()*0.6 + rar*0.12;
+        setHint("🌊 <b>Рыба рванула!</b> Ослабь, не порви леску!");
+        splashes.push({x:bob.x,y:bob.y,t:0});
+        beep(240,0.12);
+      }
+    }
+  }
   if(mouseDown){
     tension += (14 + fishPull*0.5)*dt;
     dist -= (16*ro.reel - fishPull*0.4)*dt;
@@ -377,8 +407,9 @@ function updateFight(dt){
   maxTenRatio=Math.max(maxTenRatio, tension/ro.line);
   document.getElementById("tensionBar").style.width = Math.min(100,tension/ro.line*100)+"%";
   document.getElementById("distBar").style.width = dist+"%";
-  bob.x = bob.tx + Math.sin(performance.now()/60)*(struggling?7:3);
-  bob.y = bob.ty + Math.cos(performance.now()/50)*(struggling?5:2);
+  const shaking = struggling || runActive>0;
+  bob.x = bob.tx + Math.sin(performance.now()/60)*(shaking?7:3);
+  bob.y = bob.ty + Math.cos(performance.now()/50)*(shaking?5:2);
   if(tension>=ro.line){ wearRod(); missFish(); }
   else if(dist<=0){ wearRod(); landFish(); }
 }
@@ -427,7 +458,8 @@ function showCatch(f,pts){
   const nm=document.createElement("div"); nm.className="nm "+RAR_CLASS[f.fish.rar]; nm.textContent=f.fish.n; c.appendChild(nm);
   const wt=document.createElement("div"); wt.className="wt";
   wt.innerHTML=f.weight.toFixed(2)+' кг · <span class="'+RAR_CLASS[f.fish.rar]+'">'+RAR_NAME[f.fish.rar]+"</span>"; c.appendChild(wt);
-  const pt=document.createElement("div"); pt.className="pts"; pt.textContent="+"+pts+" очков 🪙"; c.appendChild(pt);
+  const pt=document.createElement("div"); pt.className="pts";
+  pt.textContent = f.fish.trash ? "0 очков 🗑️ Береги природу!" : "+"+pts+" очков 🪙"; c.appendChild(pt);
   const m=document.getElementById("catch"); m.style.display="flex";
   requestAnimationFrame(()=>{ m.style.opacity="1"; });
   clearTimeout(showCatch._t);
@@ -527,7 +559,7 @@ function openAtlas(){
   document.getElementById("atlasStats").innerHTML =
     "Открыто видов: <b>"+Object.keys(S.seenFish).length+" / "+(FISH.length+SPECIALS.length)+"</b>";
   const rows=[];
-  FISH.forEach(f=>rows.push({n:f.n, rar:f.rar, w:f.w, pts:atlasPts(f), special:false}));
+  FISH.forEach(f=>rows.push({n:f.n, rar:f.rar, w:f.w, pts:atlasPts(f), special:false, mb:f.minBait}));
   SPECIALS.forEach(c=>rows.push({n:c.n, rar:5, w:c.w, pts:Math.round(c.val*1.3*1.25*1.2), special:true}));
   rows.forEach(r=>{
     const seen=!!S.seenFish[r.n];
@@ -537,7 +569,7 @@ function openAtlas(){
     pic.style.flexShrink="0";
     const info=document.createElement("div"); info.style.flex="1"; info.style.minWidth="0";
     info.innerHTML='<div class="anm '+RAR_CLASS[r.rar]+'">'+(seen?r.n:"? ? ?")+(r.special?' <span class="spbadge">особая</span>':'')+"</div>"+
-      '<div class="ainfo">'+RAR_NAME[r.rar]+" · "+r.w[0]+"–"+r.w[1]+" кг"+(r.special?" · 🔱 крепкая снасть (карбон+)":"")+"</div>";
+      '<div class="ainfo">'+RAR_NAME[r.rar]+" · "+r.w[0]+"–"+r.w[1]+" кг"+(r.mb?" · "+BAITS[r.mb].em+" от: "+BAITS[r.mb].n:"")+(r.special?" · 🔱 крепкая снасть (карбон+)":"")+"</div>";
     const pts=document.createElement("div"); pts.className="apts"; pts.innerHTML="~"+r.pts+"🪙"+(seen?'<div class="seen">✓ поймана</div>':"");
     row.appendChild(pic); row.appendChild(info); row.appendChild(pts);
     list.appendChild(row);

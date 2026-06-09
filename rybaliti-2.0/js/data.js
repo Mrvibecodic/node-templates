@@ -9,14 +9,21 @@ const FISH = [
   {n:"Плотва",   rar:0, w:[0.1,0.5],   val:9,  minBait:0},
   {n:"Окунь",    rar:0, w:[0.1,0.9],   val:13, minBait:0},
   {n:"Карась",   rar:0, w:[0.2,1.2],   val:16, minBait:0},
+  {n:"Мусорный пакет", rar:0, w:[0.2,1.5], val:0, minBait:0, trash:true},
+  {n:"Краснопёрка", rar:1, w:[0.3,1.5], val:24, minBait:1},
   {n:"Лещ",      rar:1, w:[0.5,2.5],   val:28, minBait:0},
   {n:"Линь",     rar:1, w:[0.6,2.0],   val:34, minBait:1},
   {n:"Карп",     rar:1, w:[1.0,5.0],   val:46, minBait:1},
+  {n:"Голавль",  rar:2, w:[0.8,4.0],   val:62, minBait:2},
   {n:"Судак",    rar:2, w:[1.5,6.0],   val:72, minBait:1},
   {n:"Щука",     rar:2, w:[1.5,8.0],   val:84, minBait:2},
+  {n:"Жерех",    rar:2, w:[1.0,6.0],   val:88, minBait:3},
   {n:"Налим",    rar:2, w:[2.0,7.0],   val:92, minBait:2},
+  {n:"Форель",   rar:2, w:[0.5,3.0],   val:96, minBait:2},
+  {n:"Угорь",    rar:3, w:[0.5,3.5],   val:150, minBait:3},
   {n:"Сом",      rar:3, w:[5.0,40.0],  val:210, minBait:2},
   {n:"Осётр",    rar:3, w:[6.0,30.0],  val:270, minBait:3},
+  {n:"Таймень",  rar:3, w:[8.0,50.0],  val:320, minBait:4},
   {n:"Золотая рыбка", rar:4, w:[0.3,0.6], val:560, minBait:3},
   {n:"Царь-рыба",     rar:4, w:[20,90],   val:840, minBait:4},
 ];
@@ -53,7 +60,8 @@ const BAITS = [
   {id:"livebait",n:"Живец",   em:"🐠", cost:1500, tier:4, pack:5, desc:"Шанс на легендарный и особый улов!"},
 ];
 
-const FP_WORDS = ["qq","ff","qq","ff","hy2","pq","бс","яклауд","АВГ!","AWG","AmneziaWG","naiveproxy","TCP банят","КАСКАД","Дабл VPN","Мультиадмин","chrome","safari",
+const FP_WORDS = ["qq","ff","qq","ff","hy2","pq","бс","яклауд","АВГ!","AWG","AmneziaWG","naiveproxy",
+  "TCP банят","КАСКАД","Дабл VPN","Мультиадмин","chrome","safari",
   "ios","360","edge","random","randomized","REALITY?","vless","hello?","utls","qq?","ff!","tls1.3","client\nhello"];
 
 const MONKEY_LINES = ["клюёт?","ну как рыбалка?","много поймал?","покажи улов 👀",
@@ -77,6 +85,13 @@ const FISHART = {
   "Налим":{hei:0.42, top:"#5a4e34", bot:"#cfc29a", fin:"#4e4530", snout:"round", mark:"mottle", barbel:true},
   "Сом":{hei:0.52, top:"#2e3630", bot:"#7e8676", fin:"#242a26", snout:"round", mark:"mottle", barbel:true},
   "Осётр":{hei:0.4, top:"#6a7378", bot:"#c7cdce", fin:"#565e62", snout:"long", mark:"scutes", barbel:true},
+  "Краснопёрка":{hei:0.52, top:"#6b7a52", bot:"#f0e9c8", fin:"#e03a2a", snout:"round", mark:"scales"},
+  "Голавль":{hei:0.46, top:"#4e6470", bot:"#dfe4da", fin:"#d2622e", snout:"round", mark:"scales"},
+  "Форель":{hei:0.44, top:"#7a6238", bot:"#e8d8a8", fin:"#8a6e3e", snout:"round", mark:"spots", spotCol:"rgba(190,60,40,.6)"},
+  "Жерех":{hei:0.4, top:"#56707e", bot:"#e8eef0", fin:"#7e8e98", snout:"point", mark:"hstripe", hstripeCol:"rgba(120,140,155,.5)"},
+  "Угорь":{hei:0.24, top:"#3a4a36", bot:"#c8c89a", fin:"#2e3a2c", snout:"long", mark:"none"},
+  "Таймень":{hei:0.42, top:"#5e4a52", bot:"#d8c0b0", fin:"#b04038", snout:"long", mark:"spots", spotCol:"rgba(40,30,35,.5)"},
+  "Мусорный пакет":{special:"trashbag"},
   "Золотая рыбка":{special:"goldfish"},
   "Царь-рыба":{hei:0.6, top:"#caa23a", bot:"#ffe9a0", fin:"#e0b84a", snout:"round", mark:"scales", crown:true},
   "Кракен":{special:"octopus"},
@@ -89,11 +104,12 @@ const SPRITE_BASE = "assets/sprites/";
 const FISH_SLUG = {
   "Уклейка":"ukleyka","Ёрш":"yorsh","Плотва":"plotva","Окунь":"okun","Карась":"karas",
   "Лещ":"lesch","Линь":"lin","Карп":"karp","Судак":"sudak","Щука":"schuka","Налим":"nalim",
-  "Сом":"som","Осётр":"osetr","Золотая рыбка":"zolotaya","Царь-рыба":"tsar-ryba",
+  "Краснопёрка":"krasnoperka","Голавль":"golavl","Форель":"forel","Жерех":"zherekh","Угорь":"ugor","Таймень":"taimen",
+  "Мусорный пакет":"trashbag","Сом":"som","Осётр":"osetr","Золотая рыбка":"zolotaya","Царь-рыба":"tsar-ryba",
   "Кракен":"kraken","Лесси":"lessi","Посейдон":"poseidon","Левиафан":"leviafan"
 };
 const SPRITE_NAMES = [
   "ukleyka","yorsh","plotva","okun","karas","lesch","lin","karp","sudak","schuka","nalim",
-  "som","osetr","zolotaya","tsar-ryba","kraken","lessi","poseidon","leviafan",
+  "som","osetr","zolotaya","tsar-ryba","trashbag","krasnoperka","golavl","forel","zherekh","ugor","taimen","kraken","lessi","poseidon","leviafan",
   "bamboo","glass","carbon","spin","epic","worm","maggot","wobbler","spinner","livebait","monkey"
 ];
