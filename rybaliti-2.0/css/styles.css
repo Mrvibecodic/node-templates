@@ -161,3 +161,6 @@ canvas { display:block; }
   #atlasBtn { font-size:24px; padding:4px 11px; line-height:1; }
   #atlasBtn .btxt { display:none; }
 }
+
+.warn-blink { color:#ff6b6b; font-weight:700; animation: warnblink .85s ease-in-out infinite; }
+@keyframes warnblink { 0%,100%{ opacity:1; } 50%{ opacity:.25; } }

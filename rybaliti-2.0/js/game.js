@@ -157,6 +157,7 @@ function consumeBait(){
   if(b.inf) return;
   S.baitCharges[b.id]=(S.baitCharges[b.id]||0)-1;
   if(S.baitCharges[b.id]<=0){ S.baitCharges[b.id]=0; S.bait="worm"; toast("Приманка кончилась — поставил червяка 🪱"); }
+  else if(S.baitCharges[b.id]===1){ toast("⚠️ Последняя «"+b.n+"»!"); }
   save(); updateHUD();
 }
 function wearRod(){
@@ -164,8 +165,10 @@ function wearRod(){
   if(!ro.dur) return;
   const ratio=clamp(maxTenRatio,0,1);
   const wear=1.2+ratio*ratio*8.5;
+  const before=(S.rodDur[ro.id]??ro.dur)/ro.dur;
   S.rodDur[ro.id]=Math.max(0,(S.rodDur[ro.id]??ro.dur)-wear);
   if(S.rodDur[ro.id]<=0){ S.rod="bamboo"; toast("🎣 "+ro.n+" сломалась! Взял бамбук."); }
+  else if(before>0.25 && S.rodDur[ro.id]/ro.dur<=0.25){ toast("⚠️ "+ro.n+": мало прочности!"); }
   save(); updateHUD();
 }
 function startWaiting(){
@@ -406,8 +409,10 @@ addEventListener("touchcancel", ()=>{ mouseDown=false; });
 function updateHUD(){
   document.getElementById("coinsP").innerHTML = S.coins+' <small>очков</small>';
   const ro=rod(), b=bait();
-  const durStr = ro.dur ? ' <span style="color:#9fc4dc">('+Math.round(rodDurPct()*100)+"%)</span>" : "";
-  const chStr  = b.inf ? "" : ' <span style="color:#9fc4dc">×'+(S.baitCharges[b.id]||0)+"</span>";
+  let durStr="";
+  if(ro.dur){ const pct=Math.round(rodDurPct()*100); durStr = pct<=25 ? ' <span class="warn-blink">('+pct+'%)</span>' : ' <span style="color:#9fc4dc">('+pct+'%)</span>'; }
+  let chStr="";
+  if(!b.inf){ const ch=S.baitCharges[b.id]||0; chStr = ch<=1 ? ' <span class="warn-blink">×'+ch+' ⚠</span>' : ' <span style="color:#9fc4dc">×'+ch+"</span>"; }
   document.getElementById("gearP").innerHTML =
     "🎣 <b>"+ro.n+"</b>"+durStr+"<br>🪱 <b>"+b.n+"</b>"+chStr;
 }
