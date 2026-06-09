@@ -25,6 +25,7 @@ const rod = ()=>RODS.find(r=>r.id===S.rod);
 const bait= ()=>BAITS.find(b=>b.id===S.bait);
 function rodDurPct(){ const ro=rod(); if(!ro.dur) return 1; return clamp((S.rodDur[ro.id]??ro.dur)/ro.dur,0,1); }
 function rodIndex(){ return RODS.findIndex(r=>r.id===S.rod); }
+function canFightSpecial(){ return rod().line >= 145; }
 
 const SPRITES={};
 function spriteReady(slug){ const im=SPRITES[slug]; return (im && im._ok && im.complete && im.naturalWidth>0) ? im : null; }
@@ -68,6 +69,71 @@ let tension=0, dist=100, struggle=0, fishWeightFactor=1, maxTenRatio=0;
 let runActive=0, runCd=0;
 let ripples=[], splashes=[], shadowFish=[], bubbles=[];
 let approachT=0;
+
+let schools=[], schoolCd=14, bobSchool=null;
+function spawnSchool(){
+  if(schools.length>=2) return;
+  const name = SCHOOL_FISH[(Math.random()*SCHOOL_FISH.length)|0];
+  const anim = SCHOOL_ANIMS[(Math.random()*SCHOOL_ANIMS.length)|0];
+  const minY=horizon+34, maxY=H*0.8;
+  const r = 46 + Math.random()*42;
+  const sx = W*(0.16+Math.random()*0.6);
+  const sy = minY + Math.random()*(maxY-minY);
+  const n = 5 + (Math.random()*7|0);
+  const dots=[]; for(let i=0;i<n;i++) dots.push({a:Math.random()*6.28, rr:0.2+Math.random()*0.8, ph:Math.random()*6, sp:0.6+Math.random()*0.8});
+  const dir = Math.random()<0.5?-1:1;
+  schools.push({ name, anim, x:sx, y:sy, r, t:0,
+    life:16+Math.random()*12, vx:dir*(6+Math.random()*10), dots, fade:0, hint:false });
+  if(gLight>0.4) toast("🐟 Косяк на воде: "+name+"! Закинь туда крючок ⚡", true);
+}
+function updateSchools(dt){
+  for(const s of schools){
+    s.t+=dt;
+    s.x += s.vx*dt;
+    s.y += Math.sin(s.t*0.6+s.x*0.01)*4*dt;
+    if(s.x< W*0.08 || s.x> W*0.92) s.vx*=-1;
+    s.fade = s.t<1.2 ? s.t/1.2 : (s.t>s.life-1.6 ? Math.max(0,(s.life-s.t)/1.6) : 1);
+  }
+  schools=schools.filter(s=>s.t<s.life);
+  schoolCd-=dt;
+  if(schoolCd<=0 && state!=="fighting"){
+    schoolCd = 26 + Math.random()*34;
+    if(Math.random()<0.7) spawnSchool();
+  }
+}
+function schoolAt(x,y){
+  let best=null,bd=1e9;
+  for(const s of schools){
+    if(s.fade<0.5) continue;
+    const d=Math.hypot(x-s.x,y-s.y);
+    if(d < s.r+26 && d<bd){ bd=d; best=s; }
+  }
+  return best;
+}
+
+let ambient=[], ambientCd=2;
+function spawnAmbient(){
+  if(ambient.length>=5) return;
+  const dir = Math.random()<0.5?1:-1;
+  const minY=horizon+40, maxY=H*0.92;
+  const y = minY + Math.random()*(maxY-minY);
+  const depth = (y-minY)/(maxY-minY);
+  const size = (10+Math.random()*16)*(1-depth*0.4);
+  const col = FISH_SHADOW_COLS[(Math.random()*FISH_SHADOW_COLS.length)|0];
+  ambient.push({ x: dir>0?-30:W+30, y, dir, size, ph:Math.random()*6,
+    sp:(14+Math.random()*22), colD:col[0], colL:col[1],
+    alpha:0.18+0.32*(1-depth), wob:0.4+Math.random()*0.5 });
+}
+function updateAmbient(dt){
+  for(const a of ambient){
+    a.x += a.dir*a.sp*dt;
+    a.ph += dt*a.wob;
+    a.y += Math.sin(a.ph)*5*dt;
+  }
+  ambient=ambient.filter(a=> a.x>-60 && a.x<W+60);
+  ambientCd-=dt;
+  if(ambientCd<=0){ ambientCd=2.5+Math.random()*4; spawnAmbient(); }
+}
 
 let monkey={active:false, phase:"gone", x:0, y:0, baseY:0, peekY:0, size:90, timer:0, watchDur:3, text:"", showText:true, tilt:0};
 let monkeyDay=-1, monkeyTimes=[];
@@ -133,13 +199,33 @@ function buildHotel(){
 }
 buildHotel();
 
+let CITY=null;
+function buildCity(){
+  const blds=[];
+  const cx=0.74;
+  const specs=[
+    [-0.10, 0.020, 0.058], [-0.055, 0.028, 0.040], [-0.012, 0.022, 0.082],
+    [ 0.030, 0.034, 0.052], [ 0.075, 0.020, 0.068], [ 0.112, 0.026, 0.038]
+  ];
+  for(const s of specs){
+    const win=[]; const cols=2+(Math.random()*2|0), rows=3+(Math.random()*4|0);
+    for(let r=0;r<rows;r++){ const row=[]; for(let c=0;c<cols;c++) row.push(Math.random()<0.4); win.push(row); }
+    blds.push({fx:cx+s[0], w:s[1], h:s[2], cols, rows, win});
+  }
+  CITY={blds};
+}
+buildCity();
+
 function setHint(t){ document.getElementById("hint").innerHTML=t; }
 function avgW(f){ return (f.w[0]+f.w[1])/2; }
 
-let toastT=null;
-function toast(msg){
+let toastT=null, toastLock=0;
+function toast(msg, ambient){
+  const now=performance.now();
+  if(ambient && now<toastLock) return;
   const el=document.getElementById("toast");
   el.textContent=msg; el.classList.add("show");
+  if(!ambient) toastLock = now + 2600;
   clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove("show"),2600);
 }
 
@@ -172,28 +258,31 @@ function wearRod(){
   if(!ro.dur) return;
   const ratio=clamp(maxTenRatio,0,1);
   const wear=1.2+ratio*ratio*8.5;
-  const before=(S.rodDur[ro.id]??ro.dur)/ro.dur;
   S.rodDur[ro.id]=Math.max(0,(S.rodDur[ro.id]??ro.dur)-wear);
   if(S.rodDur[ro.id]<=0){ S.rod="bamboo"; toast("🎣 "+ro.n+" сломалась! Взял бамбук."); }
-  else if(before>0.25 && S.rodDur[ro.id]/ro.dur<=0.25){ toast("⚠️ "+ro.n+": мало прочности!"); }
   save(); updateHUD();
 }
 function startWaiting(){
   state="waiting";
   ripples.push({x:bob.x,y:bob.y,r:6,a:1});
   splashes.push({x:bob.x,y:bob.y,t:0});
+  const sch = schoolAt(bob.x,bob.y);
+  bobSchool = sch;
   const base = (3.2 + Math.random()*5.5) * (1 + gMorning*0.9);
   biteTimer = base / rod().bite;
+  if(sch) biteTimer *= 0.38;
   approachT = 0;
   shadowFish=[]; bubbles=[];
-  const n = 1+Math.floor(Math.random()*3);
+  const n = sch ? (4+Math.floor(Math.random()*4)) : (2+Math.floor(Math.random()*4));
   for(let i=0;i<n;i++){
     const col=FISH_SHADOW_COLS[(Math.random()*FISH_SHADOW_COLS.length)|0];
-    shadowFish.push({ x:bob.x+(Math.random()-0.5)*170, y:bob.y+28+Math.random()*46,
-      tx:bob.x, ty:bob.y, sp:0.4+Math.random()*0.5, ph:Math.random()*6, size:9+Math.random()*16,
-      chat:(0.8+Math.random()*2.5)*(1-gMorning*0.45), colD:col[0], colL:col[1] });
+    const spread = sch?120:170;
+    shadowFish.push({ x:bob.x+(Math.random()-0.5)*spread, y:bob.y+24+Math.random()*52,
+      tx:bob.x, ty:bob.y, sp:0.4+Math.random()*0.6, ph:Math.random()*6, size:9+Math.random()*16,
+      chat:(0.6+Math.random()*2.4)*(1-gMorning*0.4)*(sch?0.6:1), colD:col[0], colL:col[1] });
   }
-  setHint(gMorning>0.4 ? "🌅 Утро — рыба болтает, но клюёт лениво… ☕"
+  setHint(sch ? "🐟 <b>Косяк "+sch.name+"!</b> Клюёт часто — подсекай! ⚡"
+        : gMorning>0.4 ? "🌅 Утро — рыба болтает, но клюёт лениво… ☕"
         : gNight>0.6 ? "🌙 Ночь — ждём крупную рыбу… 🎣" : "Жди поклёвки… 🎣");
 }
 function triggerBite(){
@@ -208,7 +297,7 @@ function triggerBite(){
 }
 function tryHook(){
   if(state==="bite"){
-    if(hooked.isSpecial && rodIndex()<2){
+    if(hooked.isSpecial && !canFightSpecial()){
       showMiss();
       toast("🔱 "+hooked.fish.n+" мгновенно оборвал леску! Снасть слишком слабая");
       beep(150,0.28); setTimeout(()=>beep(110,0.3),120);
@@ -257,9 +346,12 @@ function resetToIdle(delay){
 }
 
 function rollFish(){
-  const bt = bait().tier;
+  const b = bait();
+  const bt = b.tier;
+  const aff = b.aff||{};
   const nb = gNight;
-  if(todaySpecial){
+  const sch = bobSchool;
+  if(todaySpecial && !sch){
     const chance = Math.min(0.025, 0.0025*(1+bt*0.7)*(1+nb*0.8));
     if(Math.random()<chance){
       const c=todaySpecial;
@@ -268,13 +360,16 @@ function rollFish(){
     }
   }
   const weights = FISH.map(f=>{
-    if(f.minBait > bt) return 0;
-    if(f.trash) return 36;
+    const isTarget = sch && f.n===sch.name;
+    if(f.minBait > bt && !isTarget) return 0;
+    if(f.trash) return sch?6:36;
     let base = RAR_BASE[f.rar];
     const boost = Math.pow(1.9, bt + nb*1.4);
     if(f.rar>0) base *= (1 + (boost-1)*(f.rar/4));
     base *= (1 + (rod().reel-1)*0.15*f.rar);
     base *= (1 + nb*0.6*f.rar);
+    if(aff[f.n]) base *= aff[f.n];
+    if(isTarget) base *= 16;
     return base;
   });
   const total = weights.reduce((a,b)=>a+b,0);
@@ -282,7 +377,16 @@ function rollFish(){
   for(let i=0;i<weights.length;i++){ r-=weights[i]; if(r<=0){ idx=i; break; } }
   const f=FISH[idx];
   let lo=f.w[0], hi=f.w[1];
-  let w = lo + Math.random()*Math.random()*(hi-lo);
+  let w;
+  if(b.small && b.small.includes(f.n)){
+    w = lo + Math.random()*Math.random()*Math.random()*(hi-lo);
+    w = Math.min(w, lo + (hi-lo)*0.4);
+  } else if(sch && f.n===sch.name){
+    w = lo + Math.random()*(hi-lo);
+    w *= 1.1;
+  } else {
+    w = lo + Math.random()*Math.random()*(hi-lo);
+  }
   w *= (1 + bt*0.04 + nb*0.07 + (rod().reel-1)*0.05);
   w = Math.min(hi*1.05, w);
   return { fish:f, weight:w };
@@ -311,6 +415,10 @@ function update(dt){
   }
   if(monkey.active) updateMonkey(dt);
 
+  updateSchools(dt);
+  updateAmbient(dt);
+  bobSchool = (state==="waiting"||state==="bite"||state==="casting") ? schoolAt(bob.x,bob.y) : null;
+
   if(state==="charging"){
     power += powerDir*120*dt;
     if(power>=100){power=100;powerDir=-1;} if(power<=0){power=0;powerDir=1;}
@@ -333,12 +441,13 @@ function update(dt){
       sf.x += Math.sin(sf.ph*1.5)*8*dt;
       sf.chat -= dt;
       if(sf.chat<=0){
-        sf.chat = (2.6+Math.random()*3.6)*(1-gMorning*0.5);
-        if(bubbles.length < (gMorning>0.3?3:2)){
-          let sx=sf.x+(Math.random()-0.5)*70;
-          if(Math.abs(sx-bob.x)<72){ sx = bob.x + (sx<bob.x?-1:1)*(72+Math.random()*46); }
-          const ok=bubbles.every(b=>Math.abs(b.x-sx)>90 || Math.abs(b.y-sf.y)>46);
-          if(ok) bubbles.push({ x:sx, y:sf.y, text:FP_WORDS[(Math.random()*FP_WORDS.length)|0], t:0, life:3.0 });
+        sf.chat = (1.8+Math.random()*3.0)*(1-gMorning*0.4);
+        const cap = bobSchool?6:(gMorning>0.3?4:3);
+        if(bubbles.length < cap){
+          let sx=sf.x+(Math.random()-0.5)*78;
+          if(Math.abs(sx-bob.x)<70){ sx = bob.x + (sx<bob.x?-1:1)*(70+Math.random()*48); }
+          const ok=bubbles.every(b=>Math.abs(b.x-sx)>72 || Math.abs(b.y-sf.y)>40);
+          if(ok) bubbles.push({ x:sx, y:sf.y, text:FP_WORDS[(Math.random()*FP_WORDS.length)|0], t:0, life:2.6+Math.random()*0.9 });
         }
       }
     }
@@ -446,6 +555,14 @@ function updateHUD(){
   if(!b.inf){ const ch=S.baitCharges[b.id]||0; chStr = ch<=1 ? ' <span class="warn-blink">×'+ch+' ⚠</span>' : ' <span style="color:#9fc4dc">×'+ch+"</span>"; }
   document.getElementById("gearP").innerHTML =
     "🎣 <b>"+ro.n+"</b>"+durStr+"<br>🪱 <b>"+b.n+"</b>"+chStr;
+  const rw=document.getElementById("rodWarn");
+  if(ro.dur){
+    const pct=Math.round(rodDurPct()*100);
+    if(pct>0 && pct<=25){
+      rw.innerHTML="⚠️ <b>"+ro.n+"</b> вот-вот сломается — прочность <b>"+pct+"%</b>! Почини в 🛒";
+      rw.style.display="block";
+    } else rw.style.display="none";
+  } else rw.style.display="none";
 }
 function showCatch(f,pts){
   const c=document.getElementById("catchCard");
@@ -505,7 +622,7 @@ function renderShop(){
       }
     } else {
       const isEq=S.bait===it.id, ch=it.inf?Infinity:(S.baitCharges[it.id]||0);
-      stat = "Уровень "+it.tier+" · крупнее и реже рыба"+(it.inf?" · ∞ зарядов":" · зарядов: "+ch);
+      stat = "🎯 "+(it.best||"разная рыба")+(it.inf?" · ∞ зарядов":" · зарядов: "+ch);
       if(it.inf){
         actions = isEq ? '<button class="buy equipped">✓ Надето</button>'
                        : '<button class="buy equip" data-eq="'+it.id+'">Выбрать</button>';
@@ -568,8 +685,9 @@ function openAtlas(){
     if(!seen) pic.style.filter="brightness(0) opacity(0.5)";
     pic.style.flexShrink="0";
     const info=document.createElement("div"); info.style.flex="1"; info.style.minWidth="0";
+    const mbBait = r.mb ? BAITS.find(x=>x.tier===r.mb) : null;
     info.innerHTML='<div class="anm '+RAR_CLASS[r.rar]+'">'+(seen?r.n:"? ? ?")+(r.special?' <span class="spbadge">особая</span>':'')+"</div>"+
-      '<div class="ainfo">'+RAR_NAME[r.rar]+" · "+r.w[0]+"–"+r.w[1]+" кг"+(r.mb?" · "+BAITS[r.mb].em+" от: "+BAITS[r.mb].n:"")+(r.special?" · 🔱 крепкая снасть (карбон+)":"")+"</div>";
+      '<div class="ainfo">'+RAR_NAME[r.rar]+" · "+r.w[0]+"–"+r.w[1]+" кг"+(mbBait?" · "+mbBait.em+" наживка ур."+r.mb+"+":"")+(r.special?" · 🔱 крепкая снасть (карбон+)":"")+"</div>";
     const pts=document.createElement("div"); pts.className="apts"; pts.innerHTML="~"+r.pts+"🪙"+(seen?'<div class="seen">✓ поймана</div>':"");
     row.appendChild(pic); row.appendChild(info); row.appendChild(pts);
     list.appendChild(row);

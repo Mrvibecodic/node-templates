@@ -82,6 +82,13 @@ canvas { display:block; }
 #special b { color:#fff0b0; }
 @keyframes glow { 0%,100%{ box-shadow:0 4px 16px rgba(255,200,80,.14);} 50%{ box-shadow:0 4px 26px rgba(255,200,80,.4);} }
 
+#rodWarn { position:absolute; top:170px; left:50%; transform:translateX(-50%); display:none; max-width:74vw; text-align:center;
+  font-size:13.5px; font-weight:700; color:#ffd5d5;
+  background:linear-gradient(90deg,rgba(70,16,16,.78),rgba(95,22,22,.78)); border:1px solid rgba(255,120,120,.5);
+  border-radius:20px; padding:7px 22px; box-shadow:0 4px 18px rgba(255,80,80,.22); animation:warnpulse 1s ease-in-out infinite; }
+#rodWarn b { color:#fff0b0; }
+@keyframes warnpulse { 0%,100%{ box-shadow:0 4px 14px rgba(255,80,80,.18); opacity:.92; } 50%{ box-shadow:0 4px 26px rgba(255,80,80,.5); opacity:1; } }
+
 #atlasBtn { position:absolute; right:16px; bottom:16px; z-index:5; }
 
 #toast { position:absolute; bottom:64px; left:50%; transform:translateX(-50%) translateY(12px); opacity:0;
@@ -131,6 +138,7 @@ canvas { display:block; }
   #powerWrap { width:62vw; }
   #hint { font-size:13px; padding:6px 14px; bottom:10px; max-width:92vw; }
   #special { font-size:11.5px; top:90px; padding:6px 13px; max-width:90vw; }
+  #rodWarn { font-size:11.5px; top:126px; padding:6px 13px; max-width:92vw; }
   #toast { font-size:13px; padding:8px 14px; max-width:90vw; }
   #intro .intrologo { width:90vw; }
   #intro .tag { font-size:13px; letter-spacing:2px; margin:4px 0 18px; }

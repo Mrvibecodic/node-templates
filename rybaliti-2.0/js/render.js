@@ -42,6 +42,8 @@ function render(){
   for(let x=0;x<=W;x+=50){ ctx.lineTo(x, horizon-10-Math.sin(x*0.006+4)*16-Math.sin(x*0.02)*7); }
   ctx.lineTo(W,horizon); ctx.fill();
 
+  drawCity(tt,L);
+
   ctx.globalAlpha=(0.10+gTwi*0.16)*(0.4+L*0.6);
   let mist=ctx.createLinearGradient(0,horizon-26,0,horizon+6);
   mist.addColorStop(0,"rgba(220,232,240,0)"); mist.addColorStop(.6,"rgba(220,232,240,1)"); mist.addColorStop(1,"rgba(220,232,240,0)");
@@ -88,7 +90,9 @@ function render(){
   }
   ctx.globalAlpha=1;
 
+  drawAmbient();
   drawLilies(L,tt);
+  drawSchools();
 
   if(state==="waiting"){
     for(const sf of shadowFish) drawShadowFish(sf);
@@ -144,18 +148,53 @@ function drawPine(cx,base,th,sw){
   ctx.lineTo(cx+5+sw*0.35,base-th*0.55); ctx.lineTo(cx+10,base);
   ctx.closePath(); ctx.fill();
 }
+function drawRoundTree(cx,base,th,sw){
+  const r=th*0.42, ty=base-th*0.62;
+  ctx.fillRect(cx-th*0.04,base-th*0.66,th*0.08,th*0.66);
+  ctx.beginPath();
+  ctx.arc(cx+sw,ty,r,0,7);
+  ctx.arc(cx+sw-r*0.7,ty+r*0.25,r*0.66,0,7);
+  ctx.arc(cx+sw+r*0.7,ty+r*0.2,r*0.7,0,7);
+  ctx.arc(cx+sw,ty-r*0.5,r*0.6,0,7);
+  ctx.fill();
+}
+function drawBirch(cx,base,th,sw,pale){
+  ctx.save();
+  ctx.strokeStyle=pale; ctx.lineWidth=Math.max(1.5,th*0.05); ctx.lineCap="round";
+  ctx.beginPath(); ctx.moveTo(cx,base); ctx.quadraticCurveTo(cx+sw*0.5,base-th*0.55,cx+sw,base-th*0.78); ctx.stroke();
+  ctx.restore();
+  ctx.beginPath();
+  ctx.ellipse(cx+sw,base-th*0.84,th*0.22,th*0.3,0,0,7);
+  ctx.ellipse(cx+sw-th*0.14,base-th*0.66,th*0.16,th*0.2,0,0,7);
+  ctx.ellipse(cx+sw+th*0.14,base-th*0.7,th*0.15,th*0.2,0,0,7);
+  ctx.fill();
+}
 function drawTrees(tt,L,wind){
-  ctx.fillStyle=rgb(mix([12,22,32],[32,62,58], L));
+  const farCol=rgb(mix([12,22,32],[32,62,58], L));
+  const farPale=rgb(mix([26,36,44],[120,150,150], L));
+  let idx=0;
   for(let x=-26;x<W;x+=34){
     const th=13+((x*5)%18)+Math.sin(x*0.5)*4;
     const sw=(wind+Math.sin(tt*1.1+x*0.07)*0.4)*th*0.07;
-    drawPine(x+9,horizon,th,sw);
+    const type=(x*7+idx*13)%10;
+    ctx.fillStyle=farCol;
+    if(type<6) drawPine(x+9,horizon,th,sw);
+    else if(type<8) drawRoundTree(x+9,horizon,th,sw);
+    else drawBirch(x+9,horizon,th*1.15,sw,farPale);
+    idx++;
   }
-  ctx.fillStyle=rgb(mix([8,18,26],[22,52,46], L));
+  const nearCol=rgb(mix([8,18,26],[22,52,46], L));
+  const nearPale=rgb(mix([22,30,38],[150,175,170], L));
+  idx=0;
   for(let x=-20;x<W;x+=40){
     const th=22+((x*7)%30)+Math.sin(x*0.7)*6;
     const sw=(wind+Math.sin(tt*1.3+x*0.05)*0.5)*th*0.1;
-    drawPine(x+10,horizon,th,sw);
+    const type=(x*3+idx*17)%10;
+    ctx.fillStyle=nearCol;
+    if(type<5) drawPine(x+10,horizon,th,sw);
+    else if(type<8) drawRoundTree(x+10,horizon,th,sw);
+    else drawBirch(x+10,horizon,th*1.1,sw,nearPale);
+    idx++;
   }
 }
 function drawClouds(tt,L){
@@ -173,6 +212,89 @@ function drawClouds(tt,L){
   }
   ctx.globalAlpha=1;
 }
+
+function drawCity(tt,L){
+  if(typeof CITY==="undefined" || !CITY) return;
+  const baseY=horizon+1;
+  const bodyCol=rgb(mix([16,24,38],[74,100,124], L));
+  const litNight=gNight;
+  for(const b of CITY.blds){
+    const x=b.fx*W, w=Math.max(6,b.w*W), h=b.h*H;
+    const x0=x-w/2, y0=baseY-h;
+    ctx.fillStyle=bodyCol;
+    ctx.fillRect(x0,y0,w,h);
+    ctx.fillRect(x-1, y0-h*0.09, 2, h*0.09);
+    const padX=w*0.2, padY=h*0.12;
+    const cw=(w-2*padX)/b.cols, ch=(h-2*padY)/b.rows;
+    const ww=Math.max(1,cw*0.55), wh=Math.max(1,ch*0.5);
+    for(let r=0;r<b.rows;r++) for(let c=0;c<b.cols;c++){
+      const wx=x0+padX+c*cw+(cw-ww)/2, wy=y0+padY+r*ch+(ch-wh)/2;
+      if(litNight>0.15 && b.win[r][c]){
+        const sh=0.55+0.3*litNight+0.1*Math.sin(tt*0.5+r*2+c+b.fx*30);
+        ctx.fillStyle="rgba(255,214,130,"+sh.toFixed(3)+")";
+      } else ctx.fillStyle=rgb(mix([10,16,26],[52,72,92], L));
+      ctx.fillRect(wx,wy,ww,wh);
+    }
+  }
+}
+function drawSchool(s){
+  const a=s.fade; if(a<=0) return;
+  ctx.save();
+  let g=ctx.createRadialGradient(s.x,s.y,2,s.x,s.y,s.r*1.2);
+  g.addColorStop(0,"rgba(190,235,255,0.85)"); g.addColorStop(1,"rgba(190,235,255,0)");
+  ctx.globalAlpha=a*0.22; ctx.fillStyle=g;
+  ctx.beginPath(); ctx.ellipse(s.x,s.y,s.r,s.r*0.5,0,0,7); ctx.fill();
+  ctx.globalAlpha=a*0.45; ctx.strokeStyle="rgba(210,240,255,0.7)"; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.ellipse(s.x,s.y,s.r*0.82,s.r*0.42,0,0,7); ctx.stroke();
+  if(s.anim==="swirl"){
+    ctx.globalAlpha=a*0.3;
+    ctx.beginPath();
+    for(let k=0;k<32;k++){ const an=k/32*6.5, rr=s.r*0.18+an*s.r*0.06;
+      const px=s.x+Math.cos(an+s.t*1.2)*rr, py=s.y+Math.sin(an+s.t*1.2)*rr*0.45;
+      k?ctx.lineTo(px,py):ctx.moveTo(px,py); }
+    ctx.stroke();
+  }
+  for(const d of s.dots){
+    let dx,dy;
+    if(s.anim==="dart"){
+      const ph=((s.t*d.sp + d.a*0.6)%1);
+      dx=(ph-0.5)*s.r*1.7; dy=(d.a-3)*s.r*0.08 + Math.sin(s.t*2+d.ph)*3;
+    } else if(s.anim==="scatter"){
+      const pulse=0.35+0.65*Math.abs(Math.sin(s.t*0.85+d.ph*0.3));
+      dx=Math.cos(d.a)*s.r*d.rr*pulse; dy=Math.sin(d.a)*s.r*0.5*d.rr*pulse;
+    } else {
+      const ang=d.a + s.t*d.sp*1.1;
+      dx=Math.cos(ang)*s.r*d.rr; dy=Math.sin(ang)*s.r*0.45*d.rr;
+    }
+    const fx=s.x+dx, fy=s.y+dy, tilt=(s.anim==="dart"?0:Math.sin(s.t*3+d.ph)*0.5);
+    ctx.globalAlpha=a*0.85; ctx.fillStyle="rgba(38,58,68,0.92)";
+    ctx.beginPath(); ctx.ellipse(fx,fy,4.2,1.8,tilt,0,7); ctx.fill();
+    ctx.globalAlpha=a*0.4; ctx.fillStyle="rgba(222,246,255,0.85)";
+    ctx.beginPath(); ctx.ellipse(fx,fy-1,2.4,0.9,tilt,0,7); ctx.fill();
+  }
+  ctx.restore(); ctx.globalAlpha=1;
+}
+function drawSchools(){ if(typeof schools!=="undefined") for(const s of schools) drawSchool(s); }
+function drawAmbientFish(a){
+  const s=a.size;
+  ctx.save();
+  ctx.translate(a.x,a.y);
+  ctx.rotate(Math.sin(a.ph)*0.1);
+  ctx.scale(a.dir,1);
+  ctx.globalAlpha=a.alpha;
+  ctx.fillStyle=a.colD;
+  ctx.beginPath(); ctx.moveTo(-s*0.9,0); ctx.lineTo(-s*1.55,-s*0.5); ctx.lineTo(-s*1.28,0); ctx.lineTo(-s*1.55,s*0.5); ctx.closePath(); ctx.fill();
+  let g=ctx.createLinearGradient(0,-s*0.5,0,s*0.5);
+  g.addColorStop(0,a.colD); g.addColorStop(0.55,a.colL); g.addColorStop(1,a.colD);
+  ctx.fillStyle=g;
+  ctx.beginPath(); ctx.ellipse(0,0,s,s*0.45,0,0,7); ctx.fill();
+  ctx.globalAlpha=a.alpha*0.5; ctx.fillStyle="#ffffff";
+  ctx.beginPath(); ctx.ellipse(-s*0.1,-s*0.12,s*0.55,s*0.1,0,0,7); ctx.fill();
+  ctx.globalAlpha=Math.min(1,a.alpha*1.4); ctx.fillStyle="#10141a";
+  ctx.beginPath(); ctx.arc(s*0.6,-s*0.06,s*0.09,0,7); ctx.fill();
+  ctx.restore(); ctx.globalAlpha=1;
+}
+function drawAmbient(){ if(typeof ambient!=="undefined") for(const a of ambient) drawAmbientFish(a); }
 
 function drawLilies(L,tt){
   const pad=mix([10,26,18],[34,72,44], L);
@@ -883,7 +1005,7 @@ function drawRod(tip){
   for(let i=0;i<=N;i++){ const t=i/N,p=bez(t),n=nrm(t),w=(wBase+(wTip-wBase)*t)/2; left.push([p.x+n.x*w,p.y+n.y*w]); right.push([p.x-n.x*w,p.y-n.y*w]); }
   ctx.fillStyle="rgba(0,0,0,.28)";
   ctx.beginPath(); ctx.moveTo(left[0][0]+5,left[0][1]+5); for(const p of left)ctx.lineTo(p[0]+5,p[1]+5); for(let i=right.length-1;i>=0;i--)ctx.lineTo(right[i][0]+5,right[i][1]+5); ctx.closePath(); ctx.fill();
-  const rodColors={bamboo:["#caa05a"],glass:["#5a7488"],carbon:["#343c46"],spin:["#7a3d3d"],premium:["#6a5aa0"],epic:["#5a3d8a"]};
+  const rodColors={bamboo:["#caa05a"],telescope:["#9a8a5a"],glass:["#5a7488"],feeder:["#8a7a4a"],carbon:["#343c46"],match:["#3d6a7a"],spin:["#7a3d3d"],premium:["#6a5aa0"],epic:["#5a3d8a"]};
   const c0=(rodColors[ro.id]||["#888"])[0];
   let grad=ctx.createLinearGradient(baseX,baseY,tip.x,tip.y); grad.addColorStop(0,c0); grad.addColorStop(1,"#cdd4da");
   ctx.fillStyle=grad;
