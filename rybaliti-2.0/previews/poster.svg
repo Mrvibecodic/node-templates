@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" role="img" aria-label="Рыбалити 2.0 — рекламный плакат">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c2236"/><stop offset="1" stop-color="#05101b"/></linearGradient>
+    <linearGradient id="wl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eafdff"/><stop offset=".5" stop-color="#7fdcff"/><stop offset="1" stop-color="#2b8fd4"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a0"/><stop offset="1" stop-color="#f4a51f"/></linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="1280" height="640" fill="url(#bg)"/>
+  <g stroke="#2b6f95" stroke-width="3" fill="none" opacity=".22">
+    <path d="M0 560 q40 -16 80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0"/>
+    <path d="M0 600 q40 -16 80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0"/>
+  </g>
+
+  <g transform="translate(40,42) scale(.84)">
+    <path d="M14 96 q22 -11 44 0 t44 0 t44 0 t44 0 t44 0 t44 0 t44 0 t44 0" fill="none" stroke="#2b6f95" stroke-width="4" opacity=".5"/>
+    <g transform="translate(300,22) rotate(-18)"><ellipse cx="0" cy="0" rx="17" ry="8.5" fill="#ffd24a" stroke="#08202e" stroke-width="2"/><path d="M-16 0 l-12 -8 l4 8 l-4 8 z" fill="#ffd24a" stroke="#08202e" stroke-width="2"/><circle cx="8" cy="-3" r="2.6" fill="#08202e"/></g>
+    <text x="14" y="76" font-family="'Arial Black',Arial,sans-serif" font-size="56" font-weight="900" letter-spacing="1" paint-order="stroke" stroke="#08202e" stroke-width="4" fill="url(#wl)">РЫБАЛИТИ</text>
+    <rect x="350" y="46" width="100" height="50" rx="13" fill="url(#gold)" stroke="#b87a10" stroke-width="2.5"/>
+    <text x="400" y="84" text-anchor="middle" font-family="'Arial Black',Arial,sans-serif" font-size="33" font-weight="900" fill="#3a2406">2.0</text>
+  </g>
+  <text x="46" y="182" font-family="Arial,sans-serif" font-size="17" letter-spacing="4" fill="#7fb8d8">НЕРЕАЛЬНОЕ ЗАРЫБЛЕНИЕ</text>
+
+  <g font-family="'Segoe UI',Arial,sans-serif">
+    <g transform="translate(46,222)"><rect x="0" y="0" width="356" height="40" rx="12" fill="#0f2a3e"/><circle cx="22" cy="20" r="6" fill="#7fdcff"/><text x="40" y="26" font-size="15" fill="#dff1ff">День и ночь за 10 минут</text></g>
+    <g transform="translate(46,272)"><rect x="0" y="0" width="356" height="40" rx="12" fill="#0f2a3e"/><circle cx="22" cy="20" r="6" fill="#ff7ae0"/><text x="40" y="26" font-size="15" fill="#dff1ff">Морские чудища: Кракен, Лесси</text></g>
+    <g transform="translate(46,322)"><rect x="0" y="0" width="356" height="40" rx="12" fill="#0f2a3e"/><circle cx="22" cy="20" r="6" fill="#5fe06b"/><text x="40" y="26" font-size="15" fill="#dff1ff">Атлас рыб и прокачка снастей</text></g>
+    <g transform="translate(46,372)"><rect x="0" y="0" width="356" height="40" rx="12" fill="#0f2a3e"/><circle cx="22" cy="20" r="6" fill="#ffd24a"/><text x="40" y="26" font-size="15" fill="#dff1ff">Мем-пасхалки proxy: qq, ff, hy2</text></g>
+    <g transform="translate(46,422)"><rect x="0" y="0" width="356" height="40" rx="12" fill="#0f2a3e"/><circle cx="22" cy="20" r="6" fill="#9fb0c0"/><text x="40" y="26" font-size="15" fill="#dff1ff">Чистый HTML + CSS + JS</text></g>
+  </g>
+
+  <g>
+    <rect x="436" y="60" width="728" height="445" rx="14" fill="#0a1a26" stroke="#2f5a6e" stroke-width="1.5"/>
+    <rect x="436" y="60" width="728" height="36" rx="14" fill="#13283a"/>
+    <rect x="436" y="78" width="728" height="18" fill="#13283a"/>
+    <circle cx="458" cy="78" r="6" fill="#ff5f56"/><circle cx="478" cy="78" r="6" fill="#ffbd2e"/><circle cx="498" cy="78" r="6" fill="#27c93f"/>
+    <rect x="528" y="68" width="500" height="20" rx="10" fill="#0a1a26"/>
+    <text x="548" y="82" font-family="Arial,sans-serif" font-size="12" fill="#6f93a8">mrvibecodic.github.io/node-templates/rybaliti-2.0</text>
+  </g>
+
+  <g>
+    <rect x="1012" y="212" width="208" height="384" rx="26" fill="#0a0d12" stroke="#2a3640" stroke-width="2"/>
+    <rect x="1086" y="222" width="60" height="8" rx="4" fill="#1a2128"/>
+  </g>
+
+  <text x="46" y="600" font-family="Arial,sans-serif" font-size="15" fill="#6f93a8">github.com/Mrvibecodic/node-templates  ·  деплой в один клик</text>
+</svg>

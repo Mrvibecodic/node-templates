@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 780" width="390" height="780" role="img" aria-label="Рыбалити 2.0 — мобильный экран">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b3a52"/><stop offset=".6" stop-color="#3d6f8f"/><stop offset="1" stop-color="#7fb4c9"/></linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2e6270"/><stop offset=".4" stop-color="#1c4856"/><stop offset="1" stop-color="#0c2430"/></linearGradient>
+    <radialGradient id="sun" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffeaa0"/><stop offset=".35" stop-color="#ffd27a" stop-opacity=".5"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient>
+    <radialGradient id="vig" cx="50%" cy="50%" r="75%"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></radialGradient>
+    <linearGradient id="neon" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#39c9ff" stop-opacity=".5"/><stop offset="1" stop-color="#39c9ff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="wl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eafdff"/><stop offset=".5" stop-color="#7fdcff"/><stop offset="1" stop-color="#2b8fd4"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a0"/><stop offset="1" stop-color="#f4a51f"/></linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="390" height="320" fill="url(#sky)"/>
+  <circle cx="320" cy="120" r="90" fill="url(#sun)"/>
+  <circle cx="320" cy="120" r="24" fill="#ffe7a0"/>
+  <g fill="#eef6fb" opacity=".5"><g transform="translate(110,96) scale(.7)"><ellipse cx="0" cy="0" rx="74" ry="26"/><ellipse cx="-48" cy="10" rx="34" ry="22"/><ellipse cx="50" cy="8" rx="40" ry="24"/><ellipse cx="14" cy="-18" rx="34" ry="22"/></g></g>
+
+  <path d="M0 320 L0 280 Q120 250 240 274 Q330 256 390 272 L390 320 Z" fill="#3a566a"/>
+  <path d="M0 320 L0 296 Q140 278 300 298 Q360 290 390 300 L390 320 Z" fill="#46647a"/>
+  <rect x="0" y="304" width="390" height="16" fill="#dce8f0" opacity=".18"/>
+
+  <g transform="translate(60,228)">
+    <rect x="0" y="0" width="104" height="92" fill="#212c34"/>
+    <rect x="0" y="0" width="104" height="46" fill="#2a3640"/>
+    <g fill="#ffd278"><rect x="12" y="10" width="12" height="9"/><rect x="54" y="10" width="12" height="9"/><rect x="32" y="32" width="12" height="9"/><rect x="74" y="56" width="12" height="9"/></g>
+    <g fill="#0a0e12"><rect x="32" y="10" width="12" height="9"/><rect x="74" y="10" width="12" height="9"/><rect x="12" y="32" width="12" height="9"/><rect x="54" y="56" width="12" height="9"/></g>
+    <text x="52" y="-10" text-anchor="middle" font-family="'Arial Black',Arial,sans-serif" font-size="13" font-weight="900" fill="#bff0ff">MTProto</text>
+  </g>
+
+  <rect x="0" y="320" width="390" height="460" fill="url(#water)"/>
+  <rect x="78" y="322" width="64" height="50" fill="url(#neon)" opacity=".5"/>
+  <g stroke="#bfe9ff" stroke-width="2" opacity=".12"><line x1="120" y1="360" x2="270" y2="360"/><line x1="100" y1="430" x2="290" y2="430"/><line x1="120" y1="520" x2="280" y2="520"/><line x1="110" y1="610" x2="270" y2="610"/></g>
+
+  <path d="M372 250 Q300 360 196 470" fill="none" stroke="#ebf5ff" stroke-width="2" opacity=".6"/>
+  <g transform="translate(196,470)">
+    <polygon points="0,18 -5,0 5,0" fill="#e23b3b"/><path d="M-6 -3 a6 6 0 0 1 12 0 Z" fill="#f4f4f4"/><path d="M-6 -3 a6 6 0 0 0 12 0 Z" fill="#e23b3b"/>
+    <line x1="0" y1="-9" x2="0" y2="-16" stroke="#222" stroke-width="1.5"/><circle cx="0" cy="-17" r="2.4" fill="#ffcf3b"/>
+  </g>
+
+  <g>
+    <path d="M410 820 Q330 520 372 250" fill="none" stroke="#3a2d5a" stroke-width="15" stroke-linecap="round"/>
+    <circle cx="330" cy="600" r="20" fill="#0e1318" stroke="#05080a" stroke-width="3"/><circle cx="330" cy="600" r="12" fill="#2a333c"/>
+    <line x1="330" y1="600" x2="344" y2="608" stroke="#aab4bd" stroke-width="3"/>
+  </g>
+  <g><ellipse cx="70" cy="710" rx="46" ry="19" fill="#225036"/><g fill="#f7b8d6"><ellipse cx="84" cy="702" rx="5" ry="3.5"/><ellipse cx="92" cy="706" rx="5" ry="3.5"/><ellipse cx="88" cy="712" rx="5" ry="3.5"/><ellipse cx="78" cy="712" rx="5" ry="3.5"/></g><circle cx="84" cy="707" r="3" fill="#ffe27a"/></g>
+
+  <rect x="0" y="0" width="390" height="780" fill="url(#vig)"/>
+
+  <g font-family="'Segoe UI',Arial,sans-serif">
+    <rect x="71" y="14" width="248" height="66" rx="12" fill="#081622" opacity=".75"/>
+    <g transform="translate(108,22) scale(.56)">
+      <path d="M10 70 q18 -9 36 0 t36 0 t36 0 t36 0 t36 0 t36 0 t36 0" fill="none" stroke="#2b6f95" stroke-width="3" opacity=".55"/>
+      <g transform="translate(224,16) rotate(-18)"><ellipse cx="0" cy="0" rx="13" ry="6.5" fill="#ffd24a" stroke="#08202e" stroke-width="1.5"/><path d="M-12 0 l-9 -6 l3 6 l-3 6 z" fill="#ffd24a" stroke="#08202e" stroke-width="1.5"/></g>
+      <text x="8" y="56" font-family="'Arial Black',Arial,sans-serif" font-size="40" font-weight="900" paint-order="stroke" stroke="#08202e" stroke-width="3" fill="url(#wl)">РЫБАЛИТИ</text>
+      <rect x="264" y="34" width="78" height="40" rx="10" fill="url(#gold)" stroke="#b87a10" stroke-width="2"/>
+      <text x="303" y="63" text-anchor="middle" font-family="'Arial Black',Arial,sans-serif" font-size="25" font-weight="900" fill="#3a2406">2.0</text>
+    </g>
+    <text x="195" y="74" text-anchor="middle" font-size="11" fill="#9fd6ff">День · ясно</text>
+
+    <rect x="14" y="14" width="50" height="44" rx="11" fill="#081622" opacity=".75"/>
+    <circle cx="30" cy="34" r="7" fill="url(#gold)" stroke="#b87a10" stroke-width="1.5"/>
+    <text x="14" y="74" font-size="17" font-weight="700" fill="#ffe27a">340</text>
+
+    <g transform="translate(286,500)">
+      <rect x="0" y="0" width="90" height="32" rx="9" fill="#081622" opacity=".7"/><text x="45" y="21" text-anchor="middle" font-size="13" font-weight="600" fill="#cfe6ff">Магазин</text>
+      <rect x="0" y="40" width="90" height="32" rx="9" fill="#081622" opacity=".7"/><text x="45" y="61" text-anchor="middle" font-size="13" font-weight="600" fill="#cfe6ff">Атлас</text>
+    </g>
+
+    <g transform="translate(60,716)">
+      <rect x="0" y="0" width="270" height="40" rx="20" fill="#081622" opacity=".6"/>
+      <text x="135" y="26" text-anchor="middle" font-size="15" fill="#dff1ff">Зажми и целься...</text>
+    </g>
+  </g>
+</svg>

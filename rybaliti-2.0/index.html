@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta name="generator" content="rybaliti-2.0 — static fishing game template">
+<title>Рыбалити 2.0 — Нереальное зарыбление</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Рыбалити 2.0 — Нереальное зарыбление">
+<meta property="og:description" content="Браузерная игра-рыбалка от первого лица: день и ночь, морские чудища, атлас рыб, прокачка снастей.">
+<meta property="og:url" content="https://mrvibecodic.github.io/node-templates/rybaliti-2.0/">
+<meta property="og:image" content="https://mrvibecodic.github.io/node-templates/rybaliti-2.0/previews/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Рыбалити 2.0 — Нереальное зарыбление">
+<meta name="twitter:description" content="Браузерная игра-рыбалка от первого лица: день и ночь, морские чудища, атлас рыб, прокачка снастей.">
+<meta name="twitter:image" content="https://mrvibecodic.github.io/node-templates/rybaliti-2.0/previews/og-image.png">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="game">
+  <canvas id="cv"></canvas>
+
+  <div class="hud" id="topbar">
+    <div class="panel coins" id="coinsP">0 <small>очков</small></div>
+    <div class="panel" id="title">
+      <svg class="logo" viewBox="0 0 352 92" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Рыбалити 2.0">
+        <defs>
+          <linearGradient id="rlw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eafdff"/><stop offset=".5" stop-color="#7fdcff"/><stop offset="1" stop-color="#2b8fd4"/></linearGradient>
+          <linearGradient id="rlg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a0"/><stop offset="1" stop-color="#f4a51f"/></linearGradient>
+        </defs>
+        <path d="M10 70 q18 -9 36 0 t36 0 t36 0 t36 0 t36 0 t36 0 t36 0" fill="none" stroke="#2b6f95" stroke-width="3" opacity=".55"/>
+        <g transform="translate(224,16) rotate(-18)"><ellipse cx="0" cy="0" rx="13" ry="6.5" fill="#ffd24a" stroke="#08202e" stroke-width="1.5"/><path d="M-12 0 l-9 -6 l3 6 l-3 6 z" fill="#ffd24a" stroke="#08202e" stroke-width="1.5"/><circle cx="6" cy="-2" r="2" fill="#08202e"/></g>
+        <text x="8" y="56" font-family="'Arial Black','Arial',sans-serif" font-size="40" font-weight="900" letter-spacing="1" paint-order="stroke" stroke="#08202e" stroke-width="3" fill="url(#rlw)">РЫБАЛИТИ</text>
+        <rect x="264" y="34" width="78" height="40" rx="10" fill="url(#rlg)" stroke="#b87a10" stroke-width="2"/>
+        <text x="303" y="63" text-anchor="middle" font-family="'Arial Black','Arial',sans-serif" font-size="25" font-weight="900" fill="#3a2406">2.0</text>
+      </svg>
+      <div id="tod">☀️ День</div>
+    </div>
+    <div class="panel gear" id="gearP"></div>
+  </div>
+
+  <div class="hud" id="special"></div>
+
+  <div id="btns">
+    <button class="iconbtn" id="shopBtn">🛒 Магазин</button>
+    <button class="iconbtn" id="logBtn">📖 Улов</button>
+  </div>
+
+  <button class="iconbtn" id="atlasBtn">🐟 Атлас рыб</button>
+
+  <div id="powerWrap"><div id="powerBar"></div></div>
+
+  <div id="fight">
+    <div class="lbl">🎣 НАТЯЖЕНИЕ ЛЕСКИ — держи мышь, не порви леску!</div>
+    <div class="bar"><div id="tensionBar"></div></div>
+    <div class="lbl">📏 ДИСТАНЦИЯ ДО РЫБЫ</div>
+    <div class="bar"><div id="distBar"></div></div>
+  </div>
+
+  <div class="hud" id="hint"></div>
+  <div id="toast"></div>
+
+  <div id="catch"><div id="catchCard"></div></div>
+  <div id="miss"><div>⚡⚡⚡ РЫБКА - В С Ё !!! ⚡⚡⚡</div></div>
+
+  <div class="modal" id="shopModal">
+    <div class="card">
+      <span class="close" data-close>×</span>
+      <h2>🛒 Рыболовный магазин</h2>
+      <div class="sub">Удочки изнашиваются от натяжения, приманки тратят заряды. Бамбук и червяк — вечные.</div>
+      <div class="tabs">
+        <div class="tab active" data-tab="rods">🎣 Удочки</div>
+        <div class="tab" data-tab="baits">🪱 Приманки</div>
+      </div>
+      <div id="shopList"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="logModal">
+    <div class="card">
+      <span class="close" data-close>×</span>
+      <h2>📖 Журнал улова</h2>
+      <div class="sub" id="logStats"></div>
+      <div id="logList"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="atlasModal">
+    <div class="card">
+      <span class="close" data-close>×</span>
+      <h2>🐟 Атлас рыб</h2>
+      <div class="sub" id="atlasStats"></div>
+      <div id="atlasList"></div>
+    </div>
+  </div>
+
+  <div id="intro">
+    <div class="em">🎣🐟</div>
+    <svg class="logo intrologo" viewBox="0 0 352 92" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Рыбалити 2.0">
+      <defs>
+        <linearGradient id="rlw2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eafdff"/><stop offset=".5" stop-color="#7fdcff"/><stop offset="1" stop-color="#2b8fd4"/></linearGradient>
+        <linearGradient id="rlg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a0"/><stop offset="1" stop-color="#f4a51f"/></linearGradient>
+      </defs>
+      <path d="M10 70 q18 -9 36 0 t36 0 t36 0 t36 0 t36 0 t36 0 t36 0" fill="none" stroke="#2b6f95" stroke-width="3" opacity=".55"/>
+      <g transform="translate(224,16) rotate(-18)"><ellipse cx="0" cy="0" rx="13" ry="6.5" fill="#ffd24a" stroke="#08202e" stroke-width="1.5"/><path d="M-12 0 l-9 -6 l3 6 l-3 6 z" fill="#ffd24a" stroke="#08202e" stroke-width="1.5"/><circle cx="6" cy="-2" r="2" fill="#08202e"/></g>
+      <text x="8" y="56" font-family="'Arial Black','Arial',sans-serif" font-size="40" font-weight="900" letter-spacing="1" paint-order="stroke" stroke="#08202e" stroke-width="3" fill="url(#rlw2)">РЫБАЛИТИ</text>
+      <rect x="264" y="34" width="78" height="40" rx="10" fill="url(#rlg2)" stroke="#b87a10" stroke-width="2"/>
+      <text x="303" y="63" text-anchor="middle" font-family="'Arial Black','Arial',sans-serif" font-size="
